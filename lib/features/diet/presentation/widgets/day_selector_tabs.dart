@@ -27,20 +27,27 @@ class DaySelectorTabs extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              children: const [
-                Icon(
-                  Icons.calendar_view_day_rounded,
-                  size: 18,
-                  color: AppColors.darkCharcoal,
-                ),
-                SizedBox(width: AppSpacing.xs),
-                Text(
-                  'Select Schedule Day',
-                  style: AppTextStyles.h3,
-                ),
-              ],
+            const Expanded(
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.calendar_view_day_rounded,
+                    size: 18,
+                    color: AppColors.darkCharcoal,
+                  ),
+                  SizedBox(width: AppSpacing.xs),
+                  Expanded(
+                    child: Text(
+                      'Select Schedule Day',
+                      style: AppTextStyles.h3,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
             ),
+            const SizedBox(width: AppSpacing.xs),
             Text(
               '${days.length} Protocols Available',
               style: AppTextStyles.caption.copyWith(

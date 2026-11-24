@@ -148,20 +148,27 @@ class _DietPlanScreenState extends ConsumerState<DietPlanScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        children: const [
-                          Icon(
-                            Icons.schedule_rounded,
-                            size: 18,
-                            color: AppColors.darkCharcoal,
-                          ),
-                          SizedBox(width: AppSpacing.xs),
-                          Text(
-                            'Daily Meal Schedule',
-                            style: AppTextStyles.h3,
-                          ),
-                        ],
+                      const Expanded(
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.schedule_rounded,
+                              size: 18,
+                              color: AppColors.darkCharcoal,
+                            ),
+                            SizedBox(width: AppSpacing.xs),
+                            Expanded(
+                              child: Text(
+                                'Daily Meal Schedule',
+                                style: AppTextStyles.h3,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
+                      const SizedBox(width: AppSpacing.xs),
                       if (activeDay != null)
                         Text(
                           '${activeDay.meals.length} Scheduled Meals',

@@ -35,18 +35,22 @@ class FitnessGoalsCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header Row
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
             children: [
               Row(
-                children: [
-                  const Icon(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  Icon(
                     Icons.flag_rounded,
                     color: AppColors.darkCharcoal,
                     size: 20,
                   ),
-                  const SizedBox(width: AppSpacing.sm),
-                  const Text(
+                  SizedBox(width: AppSpacing.sm),
+                  Text(
                     'Personal Fitness Goals',
                     style: AppTextStyles.h3,
                   ),
@@ -124,7 +128,10 @@ class FitnessGoalsCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                child: Row(
+                child: Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: AppSpacing.sm,
+                  runSpacing: 4,
                   children: [
                     Text(
                       goal.title,
@@ -132,7 +139,6 @@ class FitnessGoalsCard extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(width: AppSpacing.sm),
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 6,
@@ -181,8 +187,10 @@ class FitnessGoalsCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
 
           // Values trajectory: Start -> Current -> Target
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            spacing: AppSpacing.sm,
+            runSpacing: 2,
             children: [
               Text(
                 'Start: ${goal.startValue} ${goal.unit}',
@@ -231,10 +239,16 @@ class FitnessGoalsCard extends StatelessWidget {
                   color: AppColors.limeAccentDark,
                 ),
               ),
-              Text(
-                'Deadline: ${AppFormatters.formatShortDate(goal.targetDate)} (${goal.daysRemaining} days left)',
-                style: AppTextStyles.caption.copyWith(
-                  color: AppColors.textSecondary,
+              const SizedBox(width: AppSpacing.xs),
+              Expanded(
+                child: Text(
+                  'Deadline: ${AppFormatters.formatShortDate(goal.targetDate)} (${goal.daysRemaining} days left)',
+                  style: AppTextStyles.caption.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                  textAlign: TextAlign.end,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],

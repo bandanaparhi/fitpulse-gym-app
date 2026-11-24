@@ -511,11 +511,16 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
                   ),
                 ),
               ),
-              Text(
-                'Target: ${exercise.targetMuscle}',
-                style: AppTextStyles.caption.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textSecondary,
+              const SizedBox(width: AppSpacing.sm),
+              Flexible(
+                child: Text(
+                  'Target: ${exercise.targetMuscle}',
+                  style: AppTextStyles.caption.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textSecondary,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
@@ -599,11 +604,16 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
                 'Sets Progress',
                 style: AppTextStyles.titleMedium,
               ),
-              Text(
-                '${completedSets.length} / ${currentExercise.sets} Sets Completed',
-                style: AppTextStyles.caption.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.limeAccentDark,
+              const SizedBox(width: AppSpacing.sm),
+              Flexible(
+                child: Text(
+                  '${completedSets.length} / ${currentExercise.sets} Sets Completed',
+                  style: AppTextStyles.caption.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.limeAccentDark,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
@@ -721,9 +731,13 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
                 color: AppColors.warning,
               ),
               SizedBox(width: AppSpacing.xs),
-              Text(
-                'Coaching Form Cues',
-                style: AppTextStyles.titleMedium,
+              Expanded(
+                child: Text(
+                  'Coaching Form Cues',
+                  style: AppTextStyles.titleMedium,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ],
           ),

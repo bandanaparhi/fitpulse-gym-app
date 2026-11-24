@@ -47,20 +47,27 @@ class MacroTargetsCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: const [
-                  Icon(
-                    Icons.local_fire_department_rounded,
-                    color: AppColors.warning,
-                    size: 20,
-                  ),
-                  SizedBox(width: AppSpacing.sm),
-                  Text(
-                    'Daily Calorie & Macro Targets',
-                    style: AppTextStyles.h3,
-                  ),
-                ],
+              const Expanded(
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.local_fire_department_rounded,
+                      color: AppColors.warning,
+                      size: 20,
+                    ),
+                    SizedBox(width: AppSpacing.sm),
+                    Expanded(
+                      child: Text(
+                        'Daily Calorie & Macro Targets',
+                        style: AppTextStyles.h3,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
               ),
+              const SizedBox(width: AppSpacing.sm),
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppSpacing.sm,
@@ -178,17 +185,23 @@ class MacroTargetsCard extends StatelessWidget {
                   color: AppColors.info,
                 ),
                 const SizedBox(width: AppSpacing.xs),
-                Text(
-                  'Hydration Target: ',
-                  style: AppTextStyles.caption.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                Text(
-                  plan.hydrationRecommendation!,
-                  style: AppTextStyles.caption.copyWith(
-                    color: AppColors.textSecondary,
+                Expanded(
+                  child: RichText(
+                    text: TextSpan(
+                      style: AppTextStyles.caption.copyWith(color: AppColors.textPrimary),
+                      children: [
+                        const TextSpan(
+                          text: 'Hydration Target: ',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        TextSpan(
+                          text: plan.hydrationRecommendation!,
+                          style: const TextStyle(color: AppColors.textSecondary),
+                        ),
+                      ],
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
@@ -219,25 +232,32 @@ class MacroTargetsCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  Container(
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      color: color,
-                      shape: BoxShape.circle,
+              Expanded(
+                child: Row(
+                  children: [
+                    Container(
+                      width: 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: color,
+                        shape: BoxShape.circle,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: AppSpacing.xs),
-                  Text(
-                    label,
-                    style: AppTextStyles.caption.copyWith(
-                      color: AppColors.textSecondary,
+                    const SizedBox(width: AppSpacing.xs),
+                    Expanded(
+                      child: Text(
+                        label,
+                        style: AppTextStyles.caption.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
+              const SizedBox(width: 4),
               Text(
                 percent,
                 style: AppTextStyles.caption.copyWith(

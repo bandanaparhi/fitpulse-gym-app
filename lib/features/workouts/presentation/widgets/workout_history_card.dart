@@ -45,11 +45,15 @@ class WorkoutHistoryCard extends StatelessWidget {
                 size: 20,
               ),
               const SizedBox(width: AppSpacing.sm),
-              const Text(
-                'Completed Workouts & History',
-                style: AppTextStyles.h3,
+              const Expanded(
+                child: Text(
+                  'Completed Workouts & History',
+                  style: AppTextStyles.h3,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
-              const Spacer(),
+              const SizedBox(width: AppSpacing.sm),
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppSpacing.sm,

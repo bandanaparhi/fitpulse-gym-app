@@ -29,7 +29,11 @@ class AssignedPlanCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Plan Header Badge & Trainer Info
-          Row(
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.xs,
             children: [
               Container(
                 padding: const EdgeInsets.symmetric(
@@ -49,19 +53,23 @@ class AssignedPlanCard extends StatelessWidget {
                   ),
                 ),
               ),
-              const Spacer(),
-              const Icon(
-                Icons.verified_rounded,
-                color: AppColors.limeAccent,
-                size: 16,
-              ),
-              const SizedBox(width: 4),
-              Text(
-                'Coach $trainerName',
-                style: AppTextStyles.bodyMediumDark.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textOnDark,
-                ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.verified_rounded,
+                    color: AppColors.limeAccent,
+                    size: 16,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    'Coach $trainerName',
+                    style: AppTextStyles.bodyMediumDark.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textOnDark,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -166,11 +174,15 @@ class AssignedPlanCard extends StatelessWidget {
         children: [
           Icon(icon, size: 14, color: AppColors.limeAccent),
           const SizedBox(width: 6),
-          Text(
-            label,
-            style: AppTextStyles.caption.copyWith(
-              color: AppColors.textOnDark,
-              fontWeight: FontWeight.w500,
+          Flexible(
+            child: Text(
+              label,
+              style: AppTextStyles.caption.copyWith(
+                color: AppColors.textOnDark,
+                fontWeight: FontWeight.w500,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],

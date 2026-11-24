@@ -109,11 +109,15 @@ class WeeklyScheduleView extends StatelessWidget {
                 size: 20,
               ),
               const SizedBox(width: AppSpacing.sm),
-              const Text(
-                'Weekly Workout Schedule',
-                style: AppTextStyles.h3,
+              const Expanded(
+                child: Text(
+                  'Weekly Workout Schedule',
+                  style: AppTextStyles.h3,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
-              const Spacer(),
+              const SizedBox(width: AppSpacing.sm),
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppSpacing.sm,

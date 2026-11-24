@@ -26,7 +26,7 @@ class MembershipProgressTimeline extends StatelessWidget {
     final progress = (elapsedDays / totalDays).clamp(0.0, 1.0);
 
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.lg),
+      padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.scaffoldBackground,
         borderRadius: AppRadius.roundedMd,
@@ -38,14 +38,19 @@ class MembershipProgressTimeline extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'MEMBERSHIP TIMELINE',
-                style: AppTextStyles.caption.copyWith(
-                  letterSpacing: 0.8,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textSecondary,
+              Expanded(
+                child: Text(
+                  'MEMBERSHIP TIMELINE',
+                  style: AppTextStyles.caption.copyWith(
+                    letterSpacing: 0.8,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textSecondary,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
+              const SizedBox(width: AppSpacing.sm),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
@@ -93,37 +98,48 @@ class MembershipProgressTimeline extends StatelessWidget {
 
           // Milestone Dates row
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Started', style: AppTextStyles.caption),
-                  Text(
-                    AppFormatters.formatShortDate(startDate),
-                    style: AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: AppColors.textPrimary),
-                  ),
-                ],
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Started', style: AppTextStyles.caption),
+                    Text(
+                      AppFormatters.formatShortDate(startDate),
+                      style: AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text('Plan Term', style: AppTextStyles.caption),
-                  Text(
-                    durationMonths,
-                    style: AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: AppColors.textPrimary),
-                  ),
-                ],
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text('Plan Term', style: AppTextStyles.caption),
+                    Text(
+                      durationMonths,
+                      style: AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text('Expires', style: AppTextStyles.caption),
-                  Text(
-                    AppFormatters.formatShortDate(expiryDate),
-                    style: AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: AppColors.textPrimary),
-                  ),
-                ],
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text('Expires', style: AppTextStyles.caption),
+                    Text(
+                      AppFormatters.formatShortDate(expiryDate),
+                      style: AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

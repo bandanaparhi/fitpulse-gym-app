@@ -177,13 +177,13 @@ class WeeklyAttendanceChart extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
 
           // Legend Row
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          Wrap(
+            alignment: WrapAlignment.center,
+            spacing: AppSpacing.md,
+            runSpacing: AppSpacing.xs,
             children: [
               _buildLegendDot(AppColors.darkCharcoal, 'Completed Session'),
-              const SizedBox(width: AppSpacing.md),
               _buildLegendDot(AppColors.limeAccent, 'Today'),
-              const SizedBox(width: AppSpacing.md),
               _buildLegendDot(AppColors.borderSubtle, 'Rest Day'),
             ],
           ),
@@ -210,10 +210,21 @@ class WeeklyAttendanceChart extends StatelessWidget {
         children: [
           Icon(icon, size: 14, color: color),
           const SizedBox(width: 6),
-          Text('$label: ', style: AppTextStyles.caption),
-          Text(
-            value,
-            style: AppTextStyles.caption.copyWith(fontWeight: FontWeight.w700, color: AppColors.textPrimary),
+          Flexible(
+            child: RichText(
+              text: TextSpan(
+                style: AppTextStyles.caption,
+                children: [
+                  TextSpan(text: '$label: '),
+                  TextSpan(
+                    text: value,
+                    style: const TextStyle(fontWeight: FontWeight.w700, color: AppColors.textPrimary),
+                  ),
+                ],
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         ],
       ),

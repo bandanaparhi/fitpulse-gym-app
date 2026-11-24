@@ -81,19 +81,26 @@ class AttendanceHistoryList extends StatelessWidget {
           LayoutBuilder(
             builder: (context, constraints) {
               final isNarrow = constraints.maxWidth < 600;
-              final headerInfo = Row(
+              final headerInfo = Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: AppSpacing.sm,
+                runSpacing: 4,
                 children: [
-                  const Icon(
-                    Icons.history_rounded,
-                    color: AppColors.darkCharcoal,
-                    size: 20,
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: const [
+                      Icon(
+                        Icons.history_rounded,
+                        color: AppColors.darkCharcoal,
+                        size: 20,
+                      ),
+                      SizedBox(width: AppSpacing.sm),
+                      Text(
+                        'Attendance History',
+                        style: AppTextStyles.h3,
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: AppSpacing.sm),
-                  const Text(
-                    'Attendance History',
-                    style: AppTextStyles.h3,
-                  ),
-                  const SizedBox(width: AppSpacing.sm),
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: AppSpacing.sm,

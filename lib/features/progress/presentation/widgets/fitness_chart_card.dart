@@ -139,9 +139,13 @@ class _FitnessChartCardState extends State<FitnessChartCard> {
                         size: 20,
                       ),
                       const SizedBox(width: AppSpacing.sm),
-                      Text(
-                        _getMetricTitle(),
-                        style: AppTextStyles.h3,
+                      Expanded(
+                        child: Text(
+                          _getMetricTitle(),
+                          style: AppTextStyles.h3,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ],
                   ),

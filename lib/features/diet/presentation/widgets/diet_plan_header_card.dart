@@ -27,7 +27,11 @@ class DietPlanHeaderCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header Badge & Assigned Professional
-          Row(
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.xs,
             children: [
               Container(
                 padding: const EdgeInsets.symmetric(
@@ -47,19 +51,23 @@ class DietPlanHeaderCard extends StatelessWidget {
                   ),
                 ),
               ),
-              const Spacer(),
-              const Icon(
-                Icons.verified_user_rounded,
-                color: AppColors.limeAccent,
-                size: 16,
-              ),
-              const SizedBox(width: 4),
-              Text(
-                plan.assignedProfessional,
-                style: AppTextStyles.bodyMediumDark.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textOnDark,
-                ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.verified_user_rounded,
+                    color: AppColors.limeAccent,
+                    size: 16,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    plan.assignedProfessional,
+                    style: AppTextStyles.bodyMediumDark.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textOnDark,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -88,11 +96,15 @@ class DietPlanHeaderCard extends StatelessWidget {
                     color: AppColors.limeAccent,
                   ),
                   const SizedBox(width: 4),
-                  Text(
-                    'Goal: ${plan.goal}',
-                    style: AppTextStyles.caption.copyWith(
-                      color: AppColors.textOnDark,
-                      fontWeight: FontWeight.w500,
+                  Flexible(
+                    child: Text(
+                      'Goal: ${plan.goal}',
+                      style: AppTextStyles.caption.copyWith(
+                        color: AppColors.textOnDark,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],

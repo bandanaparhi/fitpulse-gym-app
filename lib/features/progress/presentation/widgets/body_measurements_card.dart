@@ -53,15 +53,21 @@ class BodyMeasurementsCard extends StatelessWidget {
                     size: 20,
                   ),
                   const SizedBox(width: AppSpacing.sm),
-                  const Text(
-                    'Body Measurements Log',
-                    style: AppTextStyles.h3,
+                  const Expanded(
+                    child: Text(
+                      'Body Measurements Log',
+                      style: AppTextStyles.h3,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 ],
               );
 
-              final actionButtons = Row(
-                mainAxisSize: MainAxisSize.min,
+              final actionButtons = Wrap(
+                spacing: AppSpacing.sm,
+                runSpacing: AppSpacing.xs,
+                crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   // Unit Toggle Button
                   OutlinedButton.icon(
@@ -125,7 +131,8 @@ class BodyMeasurementsCard extends StatelessWidget {
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    titleInfo,
+                    Expanded(child: titleInfo),
+                    const SizedBox(width: AppSpacing.md),
                     actionButtons,
                   ],
                 );
@@ -185,21 +192,27 @@ class BodyMeasurementsCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  const Icon(
-                    Icons.calendar_today_rounded,
-                    size: 15,
-                    color: AppColors.textSecondary,
-                  ),
-                  const SizedBox(width: AppSpacing.xs),
-                  Text(
-                    AppFormatters.formatDate(item.date),
-                    style: AppTextStyles.titleMedium.copyWith(
-                      fontWeight: FontWeight.bold,
+              Expanded(
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.calendar_today_rounded,
+                      size: 15,
+                      color: AppColors.textSecondary,
                     ),
-                  ),
-                ],
+                    const SizedBox(width: AppSpacing.xs),
+                    Expanded(
+                      child: Text(
+                        AppFormatters.formatDate(item.date),
+                        style: AppTextStyles.titleMedium.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
               ),
               Row(
                 mainAxisSize: MainAxisSize.min,

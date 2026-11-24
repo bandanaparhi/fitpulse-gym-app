@@ -96,11 +96,15 @@ class WorkoutOverviewScreen extends ConsumerWidget {
                         size: 20,
                       ),
                       const SizedBox(width: AppSpacing.sm),
-                      const Text(
-                        'Assigned Workout Routines',
-                        style: AppTextStyles.h3,
+                      const Expanded(
+                        child: Text(
+                          'Assigned Workout Routines',
+                          style: AppTextStyles.h3,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                      const Spacer(),
+                      const SizedBox(width: AppSpacing.sm),
                       Text(
                         '${workouts.length} Routines',
                         style: AppTextStyles.caption.copyWith(

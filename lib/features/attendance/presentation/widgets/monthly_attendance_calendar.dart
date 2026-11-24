@@ -88,6 +88,54 @@ class MonthlyAttendanceCalendar extends StatelessWidget {
           LayoutBuilder(
             builder: (context, constraints) {
               final isNarrow = constraints.maxWidth < 450;
+              if (isNarrow) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _buildMonthYearSelector(context),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.chevron_left_rounded),
+                              tooltip: 'Previous Month',
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                              onPressed: () {
+                                final prev = DateTime(
+                                  currentMonth.year,
+                                  currentMonth.month - 1,
+                                  1,
+                                );
+                                onMonthChanged(prev);
+                              },
+                            ),
+                            const SizedBox(width: AppSpacing.sm),
+                            IconButton(
+                              icon: const Icon(Icons.chevron_right_rounded),
+                              tooltip: 'Next Month',
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                              onPressed: () {
+                                final next = DateTime(
+                                  currentMonth.year,
+                                  currentMonth.month + 1,
+                                  1,
+                                );
+                                onMonthChanged(next);
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              }
+
               return Row(
                 children: [
                   Expanded(
@@ -117,7 +165,7 @@ class MonthlyAttendanceCalendar extends StatelessWidget {
                       onMonthChanged(next);
                     },
                   ),
-                  if (!isCurrentRealMonth && !isNarrow) ...[
+                  if (!isCurrentRealMonth) ...[
                     const SizedBox(width: AppSpacing.xs),
                     OutlinedButton(
                       style: OutlinedButton.styleFrom(
