@@ -60,11 +60,15 @@ class DietPlanHeaderCard extends StatelessWidget {
                     size: 16,
                   ),
                   const SizedBox(width: 4),
-                  Text(
-                    plan.assignedProfessional,
-                    style: AppTextStyles.bodyMediumDark.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textOnDark,
+                  Flexible(
+                    child: Text(
+                      plan.assignedProfessional,
+                      style: AppTextStyles.bodyMediumDark.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textOnDark,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],

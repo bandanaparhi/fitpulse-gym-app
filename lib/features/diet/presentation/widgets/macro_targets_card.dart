@@ -185,20 +185,18 @@ class MacroTargetsCard extends StatelessWidget {
                   color: AppColors.info,
                 ),
                 const SizedBox(width: AppSpacing.xs),
-                Expanded(
-                  child: RichText(
-                    text: TextSpan(
-                      style: AppTextStyles.caption.copyWith(color: AppColors.textPrimary),
-                      children: [
-                        const TextSpan(
-                          text: 'Hydration Target: ',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        TextSpan(
-                          text: plan.hydrationRecommendation!,
-                          style: const TextStyle(color: AppColors.textSecondary),
-                        ),
-                      ],
+                Text(
+                  'Hydration Target: ',
+                  style: AppTextStyles.caption.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                Flexible(
+                  child: Text(
+                    plan.hydrationRecommendation!,
+                    style: AppTextStyles.caption.copyWith(
+                      color: AppColors.textSecondary,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

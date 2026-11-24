@@ -161,22 +161,28 @@ class SessionCard extends StatelessWidget {
                     color: AppColors.textSecondary,
                   ),
                   const SizedBox(width: AppSpacing.xs),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Coaching Location',
-                        style: AppTextStyles.caption.copyWith(
-                          color: AppColors.textSecondary,
+                  Flexible(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Coaching Location',
+                          style: AppTextStyles.caption.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                      Text(
-                        session.location,
-                        style: AppTextStyles.bodySmall.copyWith(
-                          fontWeight: FontWeight.bold,
+                        Text(
+                          session.location,
+                          style: AppTextStyles.bodySmall.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),

@@ -152,15 +152,15 @@ class ProfileInfoCard extends StatelessWidget {
               final identityDetails = Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: AppSpacing.xs,
+                    runSpacing: 4,
                     children: [
-                      Flexible(
-                        child: Text(
-                          member.name,
-                          style: AppTextStyles.h2,
-                        ),
+                      Text(
+                        member.name,
+                        style: AppTextStyles.h2,
                       ),
-                      const SizedBox(width: AppSpacing.xs),
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: AppSpacing.sm,
@@ -186,34 +186,53 @@ class ProfileInfoCard extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 2),
-                  Row(
+                  Wrap(
+                    spacing: AppSpacing.md,
+                    runSpacing: 2,
                     children: [
-                      const Icon(
-                        Icons.badge_outlined,
-                        size: 15,
-                        color: AppColors.textSecondary,
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.badge_outlined,
+                            size: 15,
+                            color: AppColors.textSecondary,
+                          ),
+                          const SizedBox(width: 4),
+                          Flexible(
+                            child: Text(
+                              'Member ID: ${member.id}',
+                              style: AppTextStyles.caption.copyWith(
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'monospace',
+                                color: AppColors.textPrimary,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 4),
-                      Text(
-                        'Member ID: ${member.id}',
-                        style: AppTextStyles.caption.copyWith(
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'monospace',
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                      const SizedBox(width: AppSpacing.md),
-                      const Icon(
-                        Icons.calendar_today_rounded,
-                        size: 14,
-                        color: AppColors.textSecondary,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        'Joined ${AppFormatters.formatDate(member.joinedDate)}',
-                        style: AppTextStyles.caption.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.calendar_today_rounded,
+                            size: 14,
+                            color: AppColors.textSecondary,
+                          ),
+                          const SizedBox(width: 4),
+                          Flexible(
+                            child: Text(
+                              'Joined ${AppFormatters.formatDate(member.joinedDate)}',
+                              style: AppTextStyles.caption.copyWith(
+                                color: AppColors.textSecondary,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),

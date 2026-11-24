@@ -173,9 +173,13 @@ class TrainerScreen extends ConsumerWidget {
                               color: AppColors.darkCharcoal,
                             ),
                             const SizedBox(width: AppSpacing.xs),
-                            Text(
-                              'Upcoming Coaching Sessions (${upcomingSessions.length})',
-                              style: AppTextStyles.h3,
+                            Expanded(
+                              child: Text(
+                                'Upcoming Coaching Sessions (${upcomingSessions.length})',
+                                style: AppTextStyles.h3,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ],
                         ),
@@ -231,9 +235,13 @@ class TrainerScreen extends ConsumerWidget {
                               color: AppColors.darkCharcoal,
                             ),
                             const SizedBox(width: AppSpacing.xs),
-                            Text(
-                              'Assigned Workout Plans (${assignedWorkouts.length})',
-                              style: AppTextStyles.h3,
+                            Expanded(
+                              child: Text(
+                                'Assigned Workout Plans (${assignedWorkouts.length})',
+                                style: AppTextStyles.h3,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ],
                         ),
@@ -289,9 +297,13 @@ class TrainerScreen extends ConsumerWidget {
                                 color: AppColors.darkCharcoal,
                               ),
                               const SizedBox(width: AppSpacing.xs),
-                              Text(
-                                'Past Coaching Sessions (${previousSessions.length})',
-                                style: AppTextStyles.h3,
+                              Expanded(
+                                child: Text(
+                                  'Past Coaching Sessions (${previousSessions.length})',
+                                  style: AppTextStyles.h3,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
                             ],
                           ),

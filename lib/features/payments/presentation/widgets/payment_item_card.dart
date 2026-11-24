@@ -56,17 +56,21 @@ class PaymentItemCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Top Row: Date, Invoice number & Status badge
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.xs,
             children: [
-              Row(
+              Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: AppSpacing.xs,
                 children: [
                   const Icon(
                     Icons.calendar_today_rounded,
                     size: 15,
                     color: AppColors.textSecondary,
                   ),
-                  const SizedBox(width: AppSpacing.xs),
                   Text(
                     AppFormatters.formatDate(payment.date),
                     style: AppTextStyles.caption.copyWith(
@@ -74,7 +78,6 @@ class PaymentItemCard extends StatelessWidget {
                       color: AppColors.textPrimary,
                     ),
                   ),
-                  const SizedBox(width: AppSpacing.sm),
                   Text(
                     '•  ${payment.invoiceNumber}',
                     style: AppTextStyles.caption.copyWith(
@@ -110,51 +113,78 @@ class PaymentItemCard extends StatelessWidget {
 
           const SizedBox(height: AppSpacing.md),
 
-          // Main Info Row: Description, Amount, Payment Method
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      payment.description,
-                      style: AppTextStyles.titleLarge,
-                    ),
-                    const SizedBox(height: AppSpacing.xs),
-                    Row(
-                      children: [
-                        Icon(methodIcon, size: 15, color: AppColors.textSecondary),
-                        const SizedBox(width: 4),
-                        Text(
-                          payment.paymentMethod,
-                          style: AppTextStyles.caption.copyWith(
-                            color: AppColors.textSecondary,
+          // Main Info: Description, Amount, Payment Method
+          LayoutBuilder(
+            builder: (context, box) {
+              final isNarrow = box.maxWidth < 420;
+              final detailsColumn = Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    payment.description,
+                    style: AppTextStyles.titleLarge,
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Wrap(
+                    spacing: AppSpacing.md,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(methodIcon, size: 15, color: AppColors.textSecondary),
+                          const SizedBox(width: 4),
+                          Flexible(
+                            child: Text(
+                              payment.paymentMethod,
+                              style: AppTextStyles.caption.copyWith(
+                                color: AppColors.textSecondary,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
+                        ],
+                      ),
+                      Text(
+                        'ID: ${payment.id}',
+                        style: AppTextStyles.caption.copyWith(
+                          color: AppColors.textMuted,
+                          fontFamily: 'monospace',
                         ),
-                        const SizedBox(width: AppSpacing.md),
-                        Text(
-                          'ID: ${payment.id}',
-                          style: AppTextStyles.caption.copyWith(
-                            color: AppColors.textMuted,
-                            fontFamily: 'monospace',
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: AppSpacing.md),
-              Text(
+                      ),
+                    ],
+                  ),
+                ],
+              );
+
+              final amountWidget = Text(
                 AppFormatters.formatCurrency(payment.amount),
                 style: AppTextStyles.h3.copyWith(
                   fontWeight: FontWeight.bold,
                   color: AppColors.textPrimary,
                 ),
-              ),
-            ],
+              );
+
+              if (isNarrow) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    detailsColumn,
+                    const SizedBox(height: AppSpacing.sm),
+                    amountWidget,
+                  ],
+                );
+              }
+
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(child: detailsColumn),
+                  const SizedBox(width: AppSpacing.md),
+                  amountWidget,
+                ],
+              );
+            },
           ),
 
           const SizedBox(height: AppSpacing.md),
@@ -162,8 +192,10 @@ class PaymentItemCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
 
           // Actions Row: View Receipt & Transaction Details
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+          Wrap(
+            alignment: WrapAlignment.end,
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.xs,
             children: [
               OutlinedButton.icon(
                 style: OutlinedButton.styleFrom(

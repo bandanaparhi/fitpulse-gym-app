@@ -63,10 +63,15 @@ class MealCard extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          meal.name,
-                          style: AppTextStyles.titleLarge,
+                        Expanded(
+                          child: Text(
+                            meal.name,
+                            style: AppTextStyles.titleLarge,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
+                        const SizedBox(width: AppSpacing.xs),
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: AppSpacing.sm,

@@ -190,9 +190,13 @@ class PaymentHistoryScreen extends ConsumerWidget {
                       color: AppColors.darkCharcoal,
                     ),
                     const SizedBox(width: AppSpacing.xs),
-                    Text(
-                      'Transaction History (${payments.length})',
-                      style: AppTextStyles.h3,
+                    Expanded(
+                      child: Text(
+                        'Transaction History (${payments.length})',
+                        style: AppTextStyles.h3,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ],
                 ),

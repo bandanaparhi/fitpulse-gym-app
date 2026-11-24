@@ -163,7 +163,7 @@ class DashboardScreen extends ConsumerWidget {
   /// Top Welcome header with member identification, status badge, and notification shortcut.
   Widget _buildWelcomeBanner(BuildContext context, dynamic member, int unreadCount) {
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.lg),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.darkCharcoal,
         borderRadius: AppRadius.roundedLg,
@@ -182,11 +182,11 @@ class DashboardScreen extends ConsumerWidget {
             onTap: () => context.go('/profile'),
             borderRadius: AppRadius.roundedFull,
             child: CircleAvatar(
-              radius: 26,
+              radius: 22,
               backgroundColor: AppColors.darkElevated,
               child: Text(
                 'AM',
-                style: AppTextStyles.h3.copyWith(color: AppColors.limeAccent),
+                style: AppTextStyles.h3.copyWith(color: AppColors.limeAccent, fontSize: 16),
               ),
             ),
           ),
@@ -397,13 +397,23 @@ class DashboardScreen extends ConsumerWidget {
         } else {
           return Column(
             children: [
-              cardMembership,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(child: cardMembership),
+                  const SizedBox(width: AppSpacing.sm),
+                  Expanded(child: cardAttendance),
+                ],
+              ),
               const SizedBox(height: AppSpacing.sm),
-              cardAttendance,
-              const SizedBox(height: AppSpacing.sm),
-              cardPayment,
-              const SizedBox(height: AppSpacing.sm),
-              cardCoach,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(child: cardPayment),
+                  const SizedBox(width: AppSpacing.sm),
+                  Expanded(child: cardCoach),
+                ],
+              ),
             ],
           );
         }

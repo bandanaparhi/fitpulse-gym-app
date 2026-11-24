@@ -111,8 +111,11 @@ class WorkoutDetailsScreen extends ConsumerWidget {
                 const SizedBox(height: AppSpacing.xl),
 
                 // Exercise List Header
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                Wrap(
+                  alignment: WrapAlignment.spaceBetween,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: AppSpacing.sm,
+                  runSpacing: AppSpacing.xs,
                   children: [
                     Text(
                       'Exercise Breakdown (${workout.totalExercises})',

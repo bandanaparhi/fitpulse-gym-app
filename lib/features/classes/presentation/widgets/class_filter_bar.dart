@@ -52,6 +52,7 @@ class ClassFilterBar extends StatelessWidget {
           final isNarrow = constraints.maxWidth < 650;
 
           final dateDropdown = Container(
+            width: isNarrow ? null : 180,
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
             decoration: BoxDecoration(
               color: AppColors.cardSubtleBg,
@@ -60,6 +61,7 @@ class ClassFilterBar extends StatelessWidget {
             ),
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
+                isExpanded: true,
                 value: selectedDateFilter,
                 icon: const Icon(Icons.calendar_today_rounded, size: 16),
                 dropdownColor: AppColors.cardBackground,
@@ -69,7 +71,10 @@ class ClassFilterBar extends StatelessWidget {
                   color: AppColors.textPrimary,
                 ),
                 items: dateOptions.map((opt) {
-                  return DropdownMenuItem(value: opt, child: Text(opt));
+                  return DropdownMenuItem(
+                    value: opt,
+                    child: Text(opt, overflow: TextOverflow.ellipsis, maxLines: 1),
+                  );
                 }).toList(),
                 onChanged: (val) {
                   if (val != null) onDateFilterChanged(val);
@@ -79,6 +84,7 @@ class ClassFilterBar extends StatelessWidget {
           );
 
           final categoryDropdown = Container(
+            width: isNarrow ? null : 200,
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
             decoration: BoxDecoration(
               color: AppColors.cardSubtleBg,
@@ -87,6 +93,7 @@ class ClassFilterBar extends StatelessWidget {
             ),
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
+                isExpanded: true,
                 value: selectedCategory,
                 icon: const Icon(Icons.category_outlined, size: 16),
                 dropdownColor: AppColors.cardBackground,
@@ -96,7 +103,10 @@ class ClassFilterBar extends StatelessWidget {
                   color: AppColors.textPrimary,
                 ),
                 items: categoryOptions.map((opt) {
-                  return DropdownMenuItem(value: opt, child: Text(opt));
+                  return DropdownMenuItem(
+                    value: opt,
+                    child: Text(opt, overflow: TextOverflow.ellipsis, maxLines: 1),
+                  );
                 }).toList(),
                 onChanged: (val) {
                   if (val != null) onCategoryChanged(val);

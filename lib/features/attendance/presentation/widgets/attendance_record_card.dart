@@ -163,23 +163,20 @@ class AttendanceRecordCard extends StatelessWidget {
         children: [
           Icon(icon, size: 14, color: iconColor),
           const SizedBox(width: 4),
+          Text(
+            '$label: ',
+            style: AppTextStyles.caption.copyWith(
+              color: AppColors.textSecondary,
+              fontSize: 12,
+            ),
+          ),
           Flexible(
-            child: RichText(
-              text: TextSpan(
-                style: AppTextStyles.caption.copyWith(
-                  color: AppColors.textSecondary,
-                  fontSize: 12,
-                ),
-                children: [
-                  TextSpan(text: '$label: '),
-                  TextSpan(
-                    text: value,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                ],
+            child: Text(
+              value,
+              style: AppTextStyles.caption.copyWith(
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary,
+                fontSize: 12,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,

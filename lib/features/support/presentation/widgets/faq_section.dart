@@ -225,7 +225,7 @@ class _FaqSectionState extends ConsumerState<FaqSection> {
                         ),
                         subtitle: Padding(
                           padding: const EdgeInsets.only(top: 4),
-                          child: Row(
+                          child: Wrap(
                             children: [
                               Container(
                                 padding: const EdgeInsets.symmetric(

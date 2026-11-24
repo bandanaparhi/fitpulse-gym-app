@@ -47,9 +47,11 @@ class AnnouncementCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header: Category Pill, Priority Badge & Publication Date
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.xs,
             children: [
               Wrap(
                 spacing: AppSpacing.xs,
@@ -143,8 +145,11 @@ class AnnouncementCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
 
           // Footer Row: Author, Attachments Badge & Action Button
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.xs,
             children: [
               Wrap(
                 spacing: AppSpacing.md,
@@ -159,11 +164,14 @@ class AnnouncementCard extends StatelessWidget {
                         color: AppColors.textSecondary,
                       ),
                       const SizedBox(width: 4),
-                      Text(
-                        announcement.author,
-                        style: AppTextStyles.caption.copyWith(
-                          color: AppColors.textSecondary,
-                          fontWeight: FontWeight.w500,
+                      Flexible(
+                        child: Text(
+                          announcement.author,
+                          style: AppTextStyles.caption.copyWith(
+                            color: AppColors.textSecondary,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
@@ -178,10 +186,13 @@ class AnnouncementCard extends StatelessWidget {
                           color: AppColors.textSecondary,
                         ),
                         const SizedBox(width: 2),
-                        Text(
-                          '${announcement.attachments.length} attachment',
-                          style: AppTextStyles.caption.copyWith(
-                            color: AppColors.textSecondary,
+                        Flexible(
+                          child: Text(
+                            '${announcement.attachments.length} ${announcement.attachments.length == 1 ? 'attachment' : 'attachments'}',
+                            style: AppTextStyles.caption.copyWith(
+                              color: AppColors.textSecondary,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],

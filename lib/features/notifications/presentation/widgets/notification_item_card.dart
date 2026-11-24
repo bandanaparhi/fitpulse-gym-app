@@ -106,33 +106,40 @@ class NotificationItemCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Header Row: Title, Unread Indicator & Time
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (isUnread) ...[
-                            Container(
-                              width: 8,
-                              height: 8,
-                              margin: const EdgeInsets.only(top: 6, right: 6),
-                              decoration: const BoxDecoration(
-                                color: AppColors.limeAccentDark,
-                                shape: BoxShape.circle,
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          final isNarrow = constraints.maxWidth < 360;
+                          final titleWidget = Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (isUnread) ...[
+                                Container(
+                                  width: 8,
+                                  height: 8,
+                                  margin: const EdgeInsets.only(top: 2, right: 6),
+                                  decoration: const BoxDecoration(
+                                    color: AppColors.limeAccentDark,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                              ],
+                              Flexible(
+                                child: Text(
+                                  notification.title,
+                                  style: AppTextStyles.titleLarge.copyWith(
+                                    fontWeight: isUnread
+                                        ? FontWeight.bold
+                                        : FontWeight.w600,
+                                    color: AppColors.textPrimary,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
-                            ),
-                          ],
-                          Expanded(
-                            child: Text(
-                              notification.title,
-                              style: AppTextStyles.titleLarge.copyWith(
-                                fontWeight: isUnread
-                                    ? FontWeight.bold
-                                    : FontWeight.w600,
-                                color: AppColors.textPrimary,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: AppSpacing.sm),
-                          Text(
+                            ],
+                          );
+
+                          final timeWidget = Text(
                             '${AppFormatters.formatShortDate(notification.timestamp)} • ${AppFormatters.formatTime(notification.timestamp)}',
                             style: AppTextStyles.caption.copyWith(
                               color: isUnread
@@ -142,8 +149,28 @@ class NotificationItemCard extends StatelessWidget {
                                   ? FontWeight.w600
                                   : FontWeight.normal,
                             ),
-                          ),
-                        ],
+                          );
+
+                          if (isNarrow) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                titleWidget,
+                                const SizedBox(height: 2),
+                                timeWidget,
+                              ],
+                            );
+                          }
+
+                          return Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(child: titleWidget),
+                              const SizedBox(width: AppSpacing.sm),
+                              timeWidget,
+                            ],
+                          );
+                        },
                       ),
 
                       const SizedBox(height: AppSpacing.xs),

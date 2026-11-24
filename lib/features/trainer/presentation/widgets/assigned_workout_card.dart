@@ -27,8 +27,11 @@ class AssignedWorkoutCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header: Category and Exercise count
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.xs,
             children: [
               Container(
                 padding: const EdgeInsets.symmetric(
@@ -48,6 +51,7 @@ class AssignedWorkoutCard extends StatelessWidget {
                 ),
               ),
               Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   const Icon(
                     Icons.schedule_rounded,
@@ -92,8 +96,10 @@ class AssignedWorkoutCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.md),
 
           // Action buttons
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+          Wrap(
+            alignment: WrapAlignment.end,
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.xs,
             children: [
               OutlinedButton(
                 style: OutlinedButton.styleFrom(

@@ -9,6 +9,7 @@ import '../../../shared/widgets/page_header.dart';
 import 'widgets/attendance_history_list.dart';
 import 'widgets/attendance_summary_cards.dart';
 import 'widgets/monthly_attendance_calendar.dart';
+import 'widgets/qr_checkin_pass_card.dart';
 
 /// Attendance screen at `/attendance`.
 ///
@@ -69,10 +70,29 @@ class AttendanceScreen extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Page Header
-                  const PageHeader(
+                  PageHeader(
                     title: 'Attendance & Visits',
                     subtitle:
                         'Review your gym check-in logs, monthly attendance calendar, and workout durations.',
+                    trailing: OutlinedButton.icon(
+                      icon: const Icon(Icons.qr_code_scanner_rounded, size: 16),
+                      label: const Text('Member QR Pass'),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.md,
+                          vertical: 8,
+                        ),
+                        side: const BorderSide(color: AppColors.limeAccentDark),
+                        foregroundColor: AppColors.limeAccentDark,
+                      ),
+                      onPressed: () => showDialog(
+                        context: context,
+                        builder: (ctx) => Dialog(
+                          backgroundColor: Colors.transparent,
+                          child: QrCheckinPassCard(member: member),
+                        ),
+                      ),
+                    ),
                   ),
 
                   const SizedBox(height: AppSpacing.lg),

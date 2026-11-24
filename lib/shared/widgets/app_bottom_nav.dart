@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:go_router/go_router.dart';
 import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_text_styles.dart';
+import '../../app/theme/app_theme.dart';
 
 /// Touch-friendly bottom navigation bar for mobile screens.
 class AppBottomNav extends StatelessWidget {
@@ -37,17 +38,14 @@ class AppBottomNav extends StatelessWidget {
               ),
               _buildTab(
                 context: context,
-                label: 'Attendance',
-                icon: Icons.qr_code_scanner_outlined,
-                activeIcon: Icons.qr_code_scanner,
-                route: '/attendance',
-              ),
-              _buildTab(
-                context: context,
                 label: 'Workouts',
                 icon: Icons.fitness_center_outlined,
                 activeIcon: Icons.fitness_center,
                 route: '/workouts',
+              ),
+              _buildCenterQrTab(
+                context: context,
+                currentRoute: currentRoute,
               ),
               _buildTab(
                 context: context,
@@ -64,6 +62,63 @@ class AppBottomNav extends StatelessWidget {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCenterQrTab({
+    required BuildContext context,
+    required String currentRoute,
+  }) {
+    final isActive = currentRoute == '/attendance' || currentRoute.startsWith('/attendance');
+
+    return InkWell(
+      onTap: () {
+        if (currentRoute != '/attendance') {
+          context.go('/attendance');
+        }
+      },
+      borderRadius: BorderRadius.circular(AppRadius.full),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(7),
+              decoration: BoxDecoration(
+                color: isActive ? AppColors.limeAccent : AppColors.darkElevated,
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: AppColors.limeAccent,
+                  width: 1.5,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.limeAccent.withValues(alpha: isActive ? 0.35 : 0.15),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Icon(
+                Icons.qr_code_scanner_rounded,
+                size: 20,
+                color: isActive ? AppColors.darkCharcoal : AppColors.limeAccent,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              'Check-In',
+              style: AppTextStyles.caption.copyWith(
+                color: isActive ? AppColors.limeAccent : AppColors.textOnDarkMuted,
+                fontSize: 10,
+                fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
+              ),
+            ),
+          ],
         ),
       ),
     );

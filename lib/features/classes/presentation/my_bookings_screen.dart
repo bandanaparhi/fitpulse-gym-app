@@ -94,20 +94,26 @@ class _MyBookingsScreenState extends ConsumerState<MyBookingsScreen>
             child: Icon(icon, color: color, size: 20),
           ),
           const SizedBox(width: AppSpacing.md),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                value,
-                style: AppTextStyles.h3.copyWith(color: AppColors.textPrimary),
-              ),
-              Text(
-                label,
-                style: AppTextStyles.caption.copyWith(
-                  color: AppColors.textSecondary,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  value,
+                  style: AppTextStyles.h3.copyWith(color: AppColors.textPrimary),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-            ],
+                Text(
+                  label,
+                  style: AppTextStyles.caption.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -264,11 +270,15 @@ class _MyBookingsScreenState extends ConsumerState<MyBookingsScreen>
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Text(
-                              'Upcoming Reservations',
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                            const Flexible(
+                              child: Text(
+                                'Upcoming Reservations',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: 6),
                             Container(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 6,
@@ -299,11 +309,15 @@ class _MyBookingsScreenState extends ConsumerState<MyBookingsScreen>
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Text(
-                              'Booking History',
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                            const Flexible(
+                              child: Text(
+                                'Booking History',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: 6),
                             Container(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 6,

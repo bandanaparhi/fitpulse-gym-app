@@ -58,10 +58,15 @@ class ClassCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Category badge, booked indicator, and spots remaining
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.xs,
             children: [
-              Row(
+              Wrap(
+                spacing: AppSpacing.xs,
+                crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(
@@ -81,7 +86,6 @@ class ClassCard extends StatelessWidget {
                     ),
                   ),
                   if (isBookedByMember) ...[
-                    const SizedBox(width: AppSpacing.xs),
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: AppSpacing.sm,
@@ -164,11 +168,15 @@ class ClassCard extends StatelessWidget {
                 color: AppColors.textSecondary,
               ),
               const SizedBox(width: 4),
-              Text(
-                'Instructor: ${gymClass.trainerName}',
-                style: AppTextStyles.bodyMedium.copyWith(
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.textPrimary,
+              Expanded(
+                child: Text(
+                  'Instructor: ${gymClass.trainerName}',
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.textPrimary,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],

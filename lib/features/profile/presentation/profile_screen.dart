@@ -154,9 +154,13 @@ class ProfileScreen extends ConsumerWidget {
                             color: AppColors.darkCharcoal,
                           ),
                           const SizedBox(width: AppSpacing.xs),
-                          Text(
-                            'Membership Status & Protected Records',
-                            style: AppTextStyles.h3,
+                          Expanded(
+                            child: Text(
+                              'Membership Status & Protected Records',
+                              style: AppTextStyles.h3,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                         ],
                       ),

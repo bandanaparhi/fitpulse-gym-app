@@ -95,9 +95,12 @@ class AttendanceHistoryList extends StatelessWidget {
                         size: 20,
                       ),
                       SizedBox(width: AppSpacing.sm),
-                      Text(
-                        'Attendance History',
-                        style: AppTextStyles.h3,
+                      Flexible(
+                        child: Text(
+                          'Attendance History',
+                          style: AppTextStyles.h3,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ],
                   ),
@@ -122,6 +125,7 @@ class AttendanceHistoryList extends StatelessWidget {
               );
 
               final locationSelector = Container(
+                width: isNarrow ? double.infinity : 220,
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppSpacing.sm,
                   vertical: 2,
@@ -133,6 +137,7 @@ class AttendanceHistoryList extends StatelessWidget {
                 ),
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton<String>(
+                    isExpanded: true,
                     value: selectedLocation ?? 'All Locations',
                     icon: const Icon(Icons.tune_rounded, size: 16),
                     style: AppTextStyles.caption.copyWith(
@@ -144,7 +149,11 @@ class AttendanceHistoryList extends StatelessWidget {
                     items: availableLocations.map((loc) {
                       return DropdownMenuItem<String>(
                         value: loc,
-                        child: Text(loc),
+                        child: Text(
+                          loc,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       );
                     }).toList(),
                     onChanged: (val) {

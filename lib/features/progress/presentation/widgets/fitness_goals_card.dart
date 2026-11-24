@@ -50,9 +50,12 @@ class FitnessGoalsCard extends StatelessWidget {
                     size: 20,
                   ),
                   SizedBox(width: AppSpacing.sm),
-                  Text(
-                    'Personal Fitness Goals',
-                    style: AppTextStyles.h3,
+                  Flexible(
+                    child: Text(
+                      'Personal Fitness Goals',
+                      style: AppTextStyles.h3,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 ],
               ),

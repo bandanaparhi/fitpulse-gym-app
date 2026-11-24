@@ -275,47 +275,75 @@ class ContactStaffCard extends ConsumerWidget {
                           color: AppColors.limeAccentDark.withValues(alpha: 0.3),
                         ),
                       ),
-                      child: Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(AppSpacing.sm),
-                            decoration: BoxDecoration(
-                              color: AppColors.darkCharcoal,
-                              borderRadius: BorderRadius.circular(AppRadius.sm),
-                            ),
-                            child: const Icon(
-                              Icons.fitness_center_rounded,
-                              size: 18,
-                              color: AppColors.limeAccent,
-                            ),
-                          ),
-                          const SizedBox(width: AppSpacing.md),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Assigned Personal Coach',
-                                  style: AppTextStyles.caption.copyWith(
-                                    color: AppColors.textSecondary,
-                                  ),
+                      child: LayoutBuilder(
+                        builder: (context, box) {
+                          final isNarrow = box.maxWidth < 420;
+                          final trainerInfo = Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(AppSpacing.sm),
+                                decoration: BoxDecoration(
+                                  color: AppColors.darkCharcoal,
+                                  borderRadius: BorderRadius.circular(AppRadius.sm),
                                 ),
-                                Text(
-                                  info.assignedTrainerName!,
-                                  style: AppTextStyles.bodyMedium.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                child: const Icon(
+                                  Icons.fitness_center_rounded,
+                                  size: 18,
+                                  color: AppColors.limeAccent,
                                 ),
-                              ],
-                            ),
-                          ),
-                          SecondaryButton(
+                              ),
+                              const SizedBox(width: AppSpacing.md),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Assigned Personal Coach',
+                                      style: AppTextStyles.caption.copyWith(
+                                        color: AppColors.textSecondary,
+                                      ),
+                                    ),
+                                    Text(
+                                      info.assignedTrainerName!,
+                                      style: AppTextStyles.bodyMedium.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          );
+
+                          final actionBtn = SecondaryButton(
                             label: 'Message Coach',
                             icon: Icons.chat_bubble_outline_rounded,
                             height: 36,
                             onPressed: () => context.go('/trainer'),
-                          ),
-                        ],
+                          );
+
+                          if (isNarrow) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                trainerInfo,
+                                const SizedBox(height: AppSpacing.sm),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: actionBtn,
+                                ),
+                              ],
+                            );
+                          }
+
+                          return Row(
+                            children: [
+                              Expanded(child: trainerInfo),
+                              const SizedBox(width: AppSpacing.md),
+                              actionBtn,
+                            ],
+                          );
+                        },
                       ),
                     ),
                   ],

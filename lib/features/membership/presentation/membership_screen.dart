@@ -221,7 +221,7 @@ class MembershipScreen extends ConsumerWidget {
                 mainAxisSpacing: AppSpacing.md,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                childAspectRatio: isDesktop ? 2.6 : 2.2,
+                childAspectRatio: isDesktop ? 2.6 : 1.7,
                 children: [
                   _buildDetailTile(
                     label: 'Membership Price',
@@ -276,7 +276,7 @@ class MembershipScreen extends ConsumerWidget {
     required IconData icon,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: 4),
       decoration: BoxDecoration(
         color: AppColors.scaffoldBackground,
         borderRadius: AppRadius.roundedMd,
@@ -285,6 +285,7 @@ class MembershipScreen extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             children: [

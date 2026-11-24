@@ -71,6 +71,16 @@ void main() {
         final vpSize = vp.value;
 
         testWidgets('$screenName renders without overflow at $vpName', (tester) async {
+          final originalOnError = FlutterError.onError;
+          FlutterErrorDetails? caughtDetails;
+          FlutterError.onError = (FlutterErrorDetails details) {
+            caughtDetails = details;
+            debugPrint('=== CAUGHT ERROR IN $screenName at $vpName ===');
+            debugPrint(details.toString());
+          };
+          addTearDown(() {
+            FlutterError.onError = originalOnError;
+          });
           tester.view.physicalSize = vpSize;
           tester.view.devicePixelRatio = 1.0;
           addTearDown(() {
@@ -92,8 +102,9 @@ void main() {
           await tester.pump(const Duration(milliseconds: 100));
           await tester.pumpAndSettle();
 
-          // Verify no unhandled exception or RenderFlex overflow occurred
-          expect(tester.takeException(), isNull, reason: 'Screen $screenName threw an exception at $vpName');
+          FlutterError.onError = originalOnError;
+          final err = caughtDetails ?? tester.takeException();
+          expect(err, isNull, reason: 'Screen $screenName threw an exception at $vpName');
         });
       }
     }

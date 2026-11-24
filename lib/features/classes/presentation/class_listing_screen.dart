@@ -165,9 +165,13 @@ class _ClassListingScreenState extends ConsumerState<ClassListingScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'Available Classes (${filteredClasses.length})',
-                    style: AppTextStyles.h3,
+                  Expanded(
+                    child: Text(
+                      'Available Classes (${filteredClasses.length})',
+                      style: AppTextStyles.h3,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                   if (_selectedCategory != 'All Categories' ||
                       _selectedDateFilter != 'All Dates' ||

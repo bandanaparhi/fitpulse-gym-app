@@ -292,13 +292,17 @@ class _FeedbackFormCardState extends ConsumerState<FeedbackFormCard> {
                                 : AppColors.textSecondary,
                           ),
                           const SizedBox(width: AppSpacing.xs),
-                          Text(
-                            'Submit Feedback',
-                            style: AppTextStyles.bodyMedium.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: !isIssue
-                                  ? Colors.white
-                                  : AppColors.textSecondary,
+                          Flexible(
+                            child: Text(
+                              'Submit Feedback',
+                              style: AppTextStyles.bodyMedium.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: !isIssue
+                                    ? Colors.white
+                                    : AppColors.textSecondary,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],
@@ -330,13 +334,17 @@ class _FeedbackFormCardState extends ConsumerState<FeedbackFormCard> {
                                 : AppColors.textSecondary,
                           ),
                           const SizedBox(width: AppSpacing.xs),
-                          Text(
-                            'Report an Issue',
-                            style: AppTextStyles.bodyMedium.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: isIssue
-                                  ? Colors.white
-                                  : AppColors.textSecondary,
+                          Flexible(
+                            child: Text(
+                              'Report an Issue',
+                              style: AppTextStyles.bodyMedium.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: isIssue
+                                    ? Colors.white
+                                    : AppColors.textSecondary,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],
@@ -370,6 +378,7 @@ class _FeedbackFormCardState extends ConsumerState<FeedbackFormCard> {
                   const SizedBox(height: AppSpacing.xs),
                   DropdownButtonFormField<String>(
                     key: ValueKey('category_${_submissionType}_$_selectedCategory'),
+                    isExpanded: true,
                     initialValue: _selectedCategory,
                     hint: Text(
                       isIssue
@@ -378,11 +387,18 @@ class _FeedbackFormCardState extends ConsumerState<FeedbackFormCard> {
                       style: AppTextStyles.bodyMedium.copyWith(
                         color: AppColors.textMuted,
                       ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                     ),
                     items: _currentCategories.map((cat) {
                       return DropdownMenuItem<String>(
                         value: cat,
-                        child: Text(cat, style: AppTextStyles.bodyMedium),
+                        child: Text(
+                          cat,
+                          style: AppTextStyles.bodyMedium,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
                       );
                     }).toList(),
                     onChanged: (val) {

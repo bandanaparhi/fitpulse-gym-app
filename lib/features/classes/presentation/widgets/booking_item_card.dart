@@ -191,22 +191,28 @@ class BookingItemCard extends StatelessWidget {
                     color: AppColors.textSecondary,
                   ),
                   const SizedBox(width: AppSpacing.xs),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Studio Location',
-                        style: AppTextStyles.caption.copyWith(
-                          color: AppColors.textSecondary,
+                  Flexible(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Studio Location',
+                          style: AppTextStyles.caption.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                      Text(
-                        booking.room,
-                        style: AppTextStyles.bodySmall.copyWith(
-                          fontWeight: FontWeight.bold,
+                        Text(
+                          booking.room,
+                          style: AppTextStyles.bodySmall.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -248,15 +254,16 @@ class BookingItemCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.md),
 
           // Footer Row: Booked At and Actions
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.xs,
             children: [
-              Flexible(
-                child: Text(
-                  'Booked on ${AppFormatters.formatDate(booking.bookedAt)}',
-                  style: AppTextStyles.caption.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
+              Text(
+                'Booked on ${AppFormatters.formatDate(booking.bookedAt)}',
+                style: AppTextStyles.caption.copyWith(
+                  color: AppColors.textSecondary,
                 ),
               ),
               Wrap(

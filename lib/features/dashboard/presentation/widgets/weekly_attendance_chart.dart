@@ -210,17 +210,13 @@ class WeeklyAttendanceChart extends StatelessWidget {
         children: [
           Icon(icon, size: 14, color: color),
           const SizedBox(width: 6),
+          Text('$label: ', style: AppTextStyles.caption),
           Flexible(
-            child: RichText(
-              text: TextSpan(
-                style: AppTextStyles.caption,
-                children: [
-                  TextSpan(text: '$label: '),
-                  TextSpan(
-                    text: value,
-                    style: const TextStyle(fontWeight: FontWeight.w700, color: AppColors.textPrimary),
-                  ),
-                ],
+            child: Text(
+              value,
+              style: AppTextStyles.caption.copyWith(
+                fontWeight: FontWeight.w700,
+                color: AppColors.textPrimary,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
