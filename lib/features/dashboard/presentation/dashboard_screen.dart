@@ -269,108 +269,144 @@ class DashboardScreen extends ConsumerWidget {
 
   /// 4 Key KPI metrics: Membership Status, Monthly Attendance, Pending Payment, Coach.
   Widget _buildKpiMetricsGrid(BuildContext context, dynamic member) {
+    final cardMembership = SummaryCard(
+      label: 'Membership Status',
+      value: member.membershipPlan,
+      subtitle: 'Valid until ${AppFormatters.formatDate(member.membershipExpiry)}',
+      icon: Icons.workspace_premium_outlined,
+      iconColor: AppColors.limeAccentDark,
+      iconBgColor: AppColors.limeAccent.withValues(alpha: 0.18),
+      badge: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+        decoration: BoxDecoration(
+          color: AppColors.successBg,
+          borderRadius: AppRadius.roundedSm,
+        ),
+        child: Text(
+          member.membershipStatus.toUpperCase(),
+          style: AppTextStyles.badge.copyWith(color: AppColors.success),
+        ),
+      ),
+      onTap: () => context.go('/membership'),
+    );
+
+    final cardAttendance = SummaryCard(
+      label: 'Monthly Attendance',
+      value: '${member.attendanceCountThisMonth} visits',
+      subtitle: 'Target: 20 visits (90% goal)',
+      icon: Icons.qr_code_scanner_outlined,
+      iconColor: AppColors.darkCharcoal,
+      iconBgColor: AppColors.scaffoldBackground,
+      badge: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+        decoration: BoxDecoration(
+          color: AppColors.limeAccent.withValues(alpha: 0.2),
+          borderRadius: AppRadius.roundedSm,
+        ),
+        child: Text(
+          'ON TRACK 🔥',
+          style: AppTextStyles.badge.copyWith(color: AppColors.limeAccentDark),
+        ),
+      ),
+      onTap: () => context.go('/attendance'),
+    );
+
+    final cardPayment = SummaryCard(
+      label: 'Pending Payment',
+      value: AppFormatters.formatCurrency(member.pendingPaymentAmount),
+      subtitle: 'Next renewal: Dec 2026',
+      icon: Icons.receipt_long_outlined,
+      iconColor: AppColors.info,
+      iconBgColor: AppColors.infoBg,
+      badge: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+        decoration: BoxDecoration(
+          color: AppColors.successBg,
+          borderRadius: AppRadius.roundedSm,
+        ),
+        child: Text(
+          'PAID IN FULL',
+          style: AppTextStyles.badge.copyWith(color: AppColors.success),
+        ),
+      ),
+      onTap: () => context.go('/payments'),
+    );
+
+    final cardCoach = SummaryCard(
+      label: 'Personal Trainer',
+      value: member.assignedTrainer,
+      subtitle: 'CSCS Coach (Rating 4.9★)',
+      icon: Icons.sports_gymnastics_outlined,
+      iconColor: AppColors.darkCharcoal,
+      iconBgColor: AppColors.scaffoldBackground,
+      badge: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+        decoration: BoxDecoration(
+          color: AppColors.scaffoldBackground,
+          borderRadius: AppRadius.roundedSm,
+          border: Border.all(color: AppColors.borderSubtle),
+        ),
+        child: Text(
+          'ACTIVE COACH',
+          style: AppTextStyles.badge.copyWith(color: AppColors.textSecondary),
+        ),
+      ),
+      onTap: () => context.go('/trainer'),
+    );
+
     return LayoutBuilder(
       builder: (context, constraints) {
-        final cols = constraints.maxWidth >= 960 ? 4 : (constraints.maxWidth >= 540 ? 2 : 1);
+        final isDesktop = constraints.maxWidth >= 960;
+        final isTablet = constraints.maxWidth >= 600 && constraints.maxWidth < 960;
 
-        return GridView.count(
-          crossAxisCount: cols,
-          crossAxisSpacing: AppSpacing.md,
-          mainAxisSpacing: AppSpacing.md,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          childAspectRatio: cols == 1 ? 2.5 : 1.7,
-          children: [
-            // 1. Membership Status & Expiry
-            SummaryCard(
-              label: 'Membership Status',
-              value: member.membershipPlan,
-              subtitle: 'Valid until ${AppFormatters.formatDate(member.membershipExpiry)}',
-              icon: Icons.workspace_premium_outlined,
-              iconColor: AppColors.limeAccentDark,
-              iconBgColor: AppColors.limeAccent.withValues(alpha: 0.18),
-              badge: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: BoxDecoration(
-                  color: AppColors.successBg,
-                  borderRadius: AppRadius.roundedSm,
-                ),
-                child: Text(
-                  member.membershipStatus.toUpperCase(),
-                  style: AppTextStyles.badge.copyWith(color: AppColors.success),
-                ),
+        if (isDesktop) {
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(child: cardMembership),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(child: cardAttendance),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(child: cardPayment),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(child: cardCoach),
+            ],
+          );
+        } else if (isTablet) {
+          return Column(
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(child: cardMembership),
+                  const SizedBox(width: AppSpacing.md),
+                  Expanded(child: cardAttendance),
+                ],
               ),
-              onTap: () => context.go('/membership'),
-            ),
-
-            // 2. Monthly Attendance
-            SummaryCard(
-              label: 'Monthly Attendance',
-              value: '${member.attendanceCountThisMonth} visits',
-              subtitle: 'Target: 20 visits (90% goal)',
-              icon: Icons.qr_code_scanner_outlined,
-              iconColor: AppColors.darkCharcoal,
-              iconBgColor: AppColors.scaffoldBackground,
-              badge: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: BoxDecoration(
-                  color: AppColors.limeAccent.withValues(alpha: 0.2),
-                  borderRadius: AppRadius.roundedSm,
-                ),
-                child: Text(
-                  'ON TRACK 🔥',
-                  style: AppTextStyles.badge.copyWith(color: AppColors.limeAccentDark),
-                ),
+              const SizedBox(height: AppSpacing.md),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(child: cardPayment),
+                  const SizedBox(width: AppSpacing.md),
+                  Expanded(child: cardCoach),
+                ],
               ),
-              onTap: () => context.go('/attendance'),
-            ),
-
-            // 3. Pending Payment
-            SummaryCard(
-              label: 'Pending Payment',
-              value: AppFormatters.formatCurrency(member.pendingPaymentAmount),
-              subtitle: 'Next renewal: Dec 2026',
-              icon: Icons.receipt_long_outlined,
-              iconColor: AppColors.info,
-              iconBgColor: AppColors.infoBg,
-              badge: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: BoxDecoration(
-                  color: AppColors.successBg,
-                  borderRadius: AppRadius.roundedSm,
-                ),
-                child: Text(
-                  'PAID IN FULL',
-                  style: AppTextStyles.badge.copyWith(color: AppColors.success),
-                ),
-              ),
-              onTap: () => context.go('/payments'),
-            ),
-
-            // 4. Assigned Trainer
-            SummaryCard(
-              label: 'Personal Trainer',
-              value: member.assignedTrainer,
-              subtitle: 'CSCS Coach (Rating 4.9★)',
-              icon: Icons.sports_gymnastics_outlined,
-              iconColor: AppColors.darkCharcoal,
-              iconBgColor: AppColors.scaffoldBackground,
-              badge: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: BoxDecoration(
-                  color: AppColors.scaffoldBackground,
-                  borderRadius: AppRadius.roundedSm,
-                  border: Border.all(color: AppColors.borderSubtle),
-                ),
-                child: Text(
-                  'ACTIVE COACH',
-                  style: AppTextStyles.badge.copyWith(color: AppColors.textSecondary),
-                ),
-              ),
-              onTap: () => context.go('/trainer'),
-            ),
-          ],
-        );
+            ],
+          );
+        } else {
+          return Column(
+            children: [
+              cardMembership,
+              const SizedBox(height: AppSpacing.sm),
+              cardAttendance,
+              const SizedBox(height: AppSpacing.sm),
+              cardPayment,
+              const SizedBox(height: AppSpacing.sm),
+              cardCoach,
+            ],
+          );
+        }
       },
     );
   }

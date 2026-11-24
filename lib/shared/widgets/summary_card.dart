@@ -43,42 +43,45 @@ class SummaryCard extends StatelessWidget {
           onTap: onTap,
           borderRadius: AppRadius.roundedLg,
           child: Padding(
-            padding: const EdgeInsets.all(AppSpacing.lg),
+            padding: const EdgeInsets.all(AppSpacing.md),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         color: effectiveIconBgColor,
                         borderRadius: AppRadius.roundedMd,
                       ),
-                      child: Icon(icon, color: effectiveIconColor, size: 22),
+                      child: Icon(icon, color: effectiveIconColor, size: 20),
                     ),
                     ?badge,
                   ],
                 ),
-                const SizedBox(height: AppSpacing.md),
+                const SizedBox(height: AppSpacing.sm),
                 Text(
                   value,
-                  style: AppTextStyles.h2.copyWith(fontSize: 22),
+                  style: AppTextStyles.h2.copyWith(fontSize: 20),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: AppSpacing.xxs),
+                const SizedBox(height: 2),
                 Text(
                   label,
-                  style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    color: AppColors.textSecondary,
+                    fontSize: 13,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 if (subtitle != null) ...[
-                  const SizedBox(height: AppSpacing.xs),
+                  const SizedBox(height: 4),
                   Text(
                     subtitle!,
                     style: AppTextStyles.caption.copyWith(color: AppColors.textMuted),
