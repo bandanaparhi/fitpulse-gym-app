@@ -50,7 +50,7 @@ class SummaryCard extends StatelessWidget {
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
                       padding: const EdgeInsets.all(7),
@@ -60,7 +60,13 @@ class SummaryCard extends StatelessWidget {
                       ),
                       child: Icon(icon, color: effectiveIconColor, size: 18),
                     ),
-                    if (badge != null) Flexible(child: badge!),
+                    if (badge != null)
+                      Flexible(
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 4),
+                          child: badge!,
+                        ),
+                      ),
                   ],
                 ),
                 const SizedBox(height: AppSpacing.sm),
@@ -88,7 +94,7 @@ class SummaryCard extends StatelessWidget {
                       color: AppColors.textMuted,
                       fontSize: 11,
                     ),
-                    maxLines: 1,
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],

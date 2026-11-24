@@ -213,38 +213,71 @@ class MembershipScreen extends ConsumerWidget {
           LayoutBuilder(
             builder: (context, constraints) {
               final isDesktop = constraints.maxWidth >= 720;
-              final cols = isDesktop ? 4 : 2;
+              final tiles = [
+                _buildDetailTile(
+                  label: 'Membership Price',
+                  value: AppFormatters.formatCurrency(plan.price),
+                  icon: Icons.payments_outlined,
+                ),
+                _buildDetailTile(
+                  label: 'Plan Duration',
+                  value: plan.durationMonths,
+                  icon: Icons.date_range_outlined,
+                ),
+                _buildDetailTile(
+                  label: 'Start Date',
+                  value: AppFormatters.formatDate(plan.startDate),
+                  icon: Icons.calendar_today_outlined,
+                ),
+                _buildDetailTile(
+                  label: 'Expiry Date',
+                  value: AppFormatters.formatDate(plan.expiryDate),
+                  icon: Icons.event_available_outlined,
+                ),
+              ];
 
-              return GridView.count(
-                crossAxisCount: cols,
-                crossAxisSpacing: AppSpacing.md,
-                mainAxisSpacing: AppSpacing.md,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                childAspectRatio: isDesktop ? 2.6 : 1.7,
-                children: [
-                  _buildDetailTile(
-                    label: 'Membership Price',
-                    value: AppFormatters.formatCurrency(plan.price),
-                    icon: Icons.payments_outlined,
+              if (isDesktop) {
+                return IntrinsicHeight(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Expanded(child: tiles[0]),
+                      const SizedBox(width: AppSpacing.md),
+                      Expanded(child: tiles[1]),
+                      const SizedBox(width: AppSpacing.md),
+                      Expanded(child: tiles[2]),
+                      const SizedBox(width: AppSpacing.md),
+                      Expanded(child: tiles[3]),
+                    ],
                   ),
-                  _buildDetailTile(
-                    label: 'Plan Duration',
-                    value: plan.durationMonths,
-                    icon: Icons.date_range_outlined,
-                  ),
-                  _buildDetailTile(
-                    label: 'Start Date',
-                    value: AppFormatters.formatDate(plan.startDate),
-                    icon: Icons.calendar_today_outlined,
-                  ),
-                  _buildDetailTile(
-                    label: 'Expiry Date',
-                    value: AppFormatters.formatDate(plan.expiryDate),
-                    icon: Icons.event_available_outlined,
-                  ),
-                ],
-              );
+                );
+              } else {
+                return Column(
+                  children: [
+                    IntrinsicHeight(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Expanded(child: tiles[0]),
+                          const SizedBox(width: AppSpacing.md),
+                          Expanded(child: tiles[1]),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    IntrinsicHeight(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Expanded(child: tiles[2]),
+                          const SizedBox(width: AppSpacing.md),
+                          Expanded(child: tiles[3]),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              }
             },
           ),
           const SizedBox(height: AppSpacing.lg),
@@ -321,45 +354,70 @@ class MembershipScreen extends ConsumerWidget {
       child: LayoutBuilder(
         builder: (context, constraints) {
           final isMultiCol = constraints.maxWidth >= 600;
-          final cols = isMultiCol ? 2 : 1;
 
-          return GridView.builder(
-            itemCount: plan.benefits.length,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: cols,
-              crossAxisSpacing: AppSpacing.md,
-              mainAxisSpacing: AppSpacing.sm,
-              childAspectRatio: isMultiCol ? 6.5 : 8.0,
-            ),
-            itemBuilder: (context, index) {
-              final benefit = plan.benefits[index];
-              return Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      color: AppColors.limeAccent.withValues(alpha: 0.2),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(Icons.check, size: 14, color: AppColors.limeAccentDark),
+          if (isMultiCol) {
+            // Two-column layout using rows of pairs
+            final rows = <Widget>[];
+            for (var i = 0; i < plan.benefits.length; i += 2) {
+              final left = _buildBenefitItem(plan.benefits[i]);
+              final right = i + 1 < plan.benefits.length
+                  ? _buildBenefitItem(plan.benefits[i + 1])
+                  : const SizedBox.shrink();
+              rows.add(
+                IntrinsicHeight(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(child: left),
+                      const SizedBox(width: AppSpacing.md),
+                      Expanded(child: right),
+                    ],
                   ),
-                  const SizedBox(width: AppSpacing.sm),
-                  Expanded(
-                    child: Text(
-                      benefit,
-                      style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
+                ),
               );
-            },
-          );
+              if (i + 2 < plan.benefits.length) {
+                rows.add(const SizedBox(height: AppSpacing.sm));
+              }
+            }
+            return Column(children: rows);
+          } else {
+            return Column(
+              children: plan.benefits
+                  .map((b) => Padding(
+                        padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                        child: _buildBenefitItem(b),
+                      ))
+                  .toList(),
+            );
+          }
         },
       ),
+    );
+  }
+
+  Widget _buildBenefitItem(String benefit) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          margin: const EdgeInsets.only(top: 2),
+          padding: const EdgeInsets.all(4),
+          decoration: BoxDecoration(
+            color: AppColors.limeAccent.withValues(alpha: 0.2),
+            shape: BoxShape.circle,
+          ),
+          child: const Icon(Icons.check, size: 14, color: AppColors.limeAccentDark),
+        ),
+        const SizedBox(width: AppSpacing.sm),
+        Expanded(
+          child: Text(
+            benefit,
+            style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary),
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
     );
   }
 

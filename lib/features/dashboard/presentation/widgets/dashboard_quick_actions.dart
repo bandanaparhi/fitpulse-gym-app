@@ -18,8 +18,6 @@ class DashboardQuickActions extends StatelessWidget {
         LayoutBuilder(
           builder: (context, constraints) {
             final isDesktop = constraints.maxWidth >= 900;
-            final isTablet = constraints.maxWidth >= 600 && constraints.maxWidth < 900;
-            final columns = isDesktop ? 4 : (isTablet ? 2 : 2);
 
             final actions = [
               _QuickActionItem(
@@ -52,21 +50,35 @@ class DashboardQuickActions extends StatelessWidget {
               ),
             ];
 
-            return GridView.builder(
-              itemCount: actions.length,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: columns,
-                crossAxisSpacing: AppSpacing.md,
-                mainAxisSpacing: AppSpacing.md,
-                childAspectRatio: isDesktop ? 2.3 : (isTablet ? 2.5 : 2.0),
-              ),
-              itemBuilder: (context, index) {
-                final item = actions[index];
-                return _buildActionCard(context, item);
-              },
-            );
+            if (isDesktop) {
+              return Row(
+                children: actions
+                    .map((item) => Expanded(child: _buildActionCard(context, item)))
+                    .expand((w) => [w, const SizedBox(width: AppSpacing.md)])
+                    .toList()
+                  ..removeLast(),
+              );
+            } else {
+              return Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(child: _buildActionCard(context, actions[0])),
+                      const SizedBox(width: AppSpacing.md),
+                      Expanded(child: _buildActionCard(context, actions[1])),
+                    ],
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  Row(
+                    children: [
+                      Expanded(child: _buildActionCard(context, actions[2])),
+                      const SizedBox(width: AppSpacing.md),
+                      Expanded(child: _buildActionCard(context, actions[3])),
+                    ],
+                  ),
+                ],
+              );
+            }
           },
         ),
       ],

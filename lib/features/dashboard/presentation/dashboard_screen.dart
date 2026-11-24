@@ -360,59 +360,69 @@ class DashboardScreen extends ConsumerWidget {
         final isTablet = constraints.maxWidth >= 600 && constraints.maxWidth < 960;
 
         if (isDesktop) {
-          return Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(child: cardMembership),
-              const SizedBox(width: AppSpacing.md),
-              Expanded(child: cardAttendance),
-              const SizedBox(width: AppSpacing.md),
-              Expanded(child: cardPayment),
-              const SizedBox(width: AppSpacing.md),
-              Expanded(child: cardCoach),
-            ],
+          return IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(child: cardMembership),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(child: cardAttendance),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(child: cardPayment),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(child: cardCoach),
+              ],
+            ),
           );
         } else if (isTablet) {
           return Column(
             children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(child: cardMembership),
-                  const SizedBox(width: AppSpacing.md),
-                  Expanded(child: cardAttendance),
-                ],
+              IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(child: cardMembership),
+                    const SizedBox(width: AppSpacing.md),
+                    Expanded(child: cardAttendance),
+                  ],
+                ),
               ),
               const SizedBox(height: AppSpacing.md),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(child: cardPayment),
-                  const SizedBox(width: AppSpacing.md),
-                  Expanded(child: cardCoach),
-                ],
+              IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(child: cardPayment),
+                    const SizedBox(width: AppSpacing.md),
+                    Expanded(child: cardCoach),
+                  ],
+                ),
               ),
             ],
           );
         } else {
           return Column(
             children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(child: cardMembership),
-                  const SizedBox(width: AppSpacing.sm),
-                  Expanded(child: cardAttendance),
-                ],
+              IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(child: cardMembership),
+                    const SizedBox(width: AppSpacing.sm),
+                    Expanded(child: cardAttendance),
+                  ],
+                ),
               ),
               const SizedBox(height: AppSpacing.sm),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(child: cardPayment),
-                  const SizedBox(width: AppSpacing.sm),
-                  Expanded(child: cardCoach),
-                ],
+              IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(child: cardPayment),
+                    const SizedBox(width: AppSpacing.sm),
+                    Expanded(child: cardCoach),
+                  ],
+                ),
               ),
             ],
           );
