@@ -183,7 +183,9 @@ class _AppShellState extends ConsumerState<AppShell> {
                 children: [
                   ...AppSidebar.primaryNav.map((item) => _buildDrawerItem(context, item, currentRoute)),
                   const Divider(color: AppColors.darkBorder, height: AppSpacing.lg),
-                  ...AppSidebar.secondaryNav.map((item) => _buildDrawerItem(context, item, currentRoute)),
+                  ...AppSidebar.secondaryNav
+                      .where((item) => item.label != 'Notifications')
+                      .map((item) => _buildDrawerItem(context, item, currentRoute)),
                 ],
               ),
             ),

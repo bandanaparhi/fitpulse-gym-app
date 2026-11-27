@@ -143,32 +143,12 @@ class DashboardScreen extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'YOUR FITNESS JOURNEY',
-          style: AppTextStyles.caption.copyWith(
-            color: AppColors.textSecondary,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1.2,
-            fontSize: 11,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
           '${_getGreeting()}, $firstName 👋',
           style: AppTextStyles.mobileGreeting.copyWith(
             fontWeight: FontWeight.w800,
             fontSize: 22,
             letterSpacing: -0.3,
             color: AppColors.textPrimary,
-          ),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-        const SizedBox(height: 2),
-        Text(
-          'Ready to get stronger today?',
-          style: AppTextStyles.bodyMedium.copyWith(
-            color: AppColors.textSecondary,
-            fontSize: 13,
           ),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
@@ -531,16 +511,6 @@ class DashboardScreen extends ConsumerWidget {
                   letterSpacing: -0.5,
                   color: AppColors.textPrimary,
                 ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Your fitness journey starts with today.',
-                style: AppTextStyles.bodyLarge.copyWith(
-                  color: AppColors.textSecondary,
-                  fontSize: 14.5,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
               ),
               SizedBox(
                 height: 0,

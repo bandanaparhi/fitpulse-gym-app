@@ -53,7 +53,7 @@ void main() {
       // 6. Quick actions
       expect(find.text('Start Workout'), findsWidgets);
       expect(find.text('Check-in'), findsWidgets);
-      expect(find.text('Book a Class'), findsOneWidget);
+      expect(find.text('Nutrition'), findsWidgets);
       expect(find.text('View Progress'), findsOneWidget);
 
       // 7. Today's Workout section

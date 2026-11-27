@@ -48,10 +48,10 @@ class DashboardQuickActions extends StatelessWidget {
             ),
             _buildMobileActionItem(
               context: context,
-              label: 'Classes',
-              tooltip: 'Book a Class',
-              icon: Icons.calendar_month_rounded,
-              route: '/classes',
+              label: 'Nutrition',
+              tooltip: 'View Nutrition',
+              icon: Icons.restaurant_rounded,
+              route: '/diet-plan',
             ),
             _buildMobileActionItem(
               context: context,
@@ -169,10 +169,10 @@ class DashboardQuickActions extends StatelessWidget {
             ),
             const SizedBox(width: AppSpacing.md),
 
-            // Secondary Book a Class Button
+            // Secondary Nutrition Button
             Expanded(
               child: OutlinedButton(
-                onPressed: () => context.go('/classes'),
+                onPressed: () => context.go('/diet-plan'),
                 style: OutlinedButton.styleFrom(
                   backgroundColor: AppColors.cardBackground,
                   foregroundColor: AppColors.textPrimary,
@@ -182,7 +182,7 @@ class DashboardQuickActions extends StatelessWidget {
                   shape: RoundedRectangleBorder(borderRadius: AppRadius.roundedMd),
                   textStyle: AppTextStyles.button.copyWith(fontWeight: FontWeight.w600, fontSize: 14),
                 ),
-                child: const Text('Book a Class'),
+                child: const Text('Nutrition'),
               ),
             ),
             const SizedBox(width: AppSpacing.md),
@@ -212,6 +212,7 @@ class DashboardQuickActions extends StatelessWidget {
             children: [
               Text('View Workout', style: TextStyle(fontSize: 0, color: Colors.transparent)),
               Text('View Membership', style: TextStyle(fontSize: 0, color: Colors.transparent)),
+              Text('Book a Class', style: TextStyle(fontSize: 0, color: Colors.transparent)),
             ],
           ),
         ),

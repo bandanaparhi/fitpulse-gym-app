@@ -21,6 +21,51 @@ class WeeklyAttendanceChart extends StatelessWidget {
   static const List<double> weeklyMinutes = [60, 55, 0, 65, 60, 45, 0];
   static const List<String> weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
+  /// Calculates the active streak (consecutive active days ending at the most recent active day)
+  int get activeStreak {
+    int lastActiveIndex = -1;
+    for (int i = weeklyMinutes.length - 1; i >= 0; i--) {
+      if (weeklyMinutes[i] > 0) {
+        lastActiveIndex = i;
+        break;
+      }
+    }
+    if (lastActiveIndex == -1) return 0;
+    int count = 0;
+    for (int i = lastActiveIndex; i >= 0; i--) {
+      if (weeklyMinutes[i] > 0) {
+        count++;
+      } else {
+        break;
+      }
+    }
+    return count;
+  }
+
+  /// Label showing the consecutive active day range (e.g. "Thu - Sat")
+  String get lastActiveRange {
+    int lastActiveIndex = -1;
+    for (int i = weeklyMinutes.length - 1; i >= 0; i--) {
+      if (weeklyMinutes[i] > 0) {
+        lastActiveIndex = i;
+        break;
+      }
+    }
+    if (lastActiveIndex == -1) return '';
+    int firstActiveIndex = lastActiveIndex;
+    for (int i = lastActiveIndex; i >= 0; i--) {
+      if (weeklyMinutes[i] > 0) {
+        firstActiveIndex = i;
+      } else {
+        break;
+      }
+    }
+    if (firstActiveIndex == lastActiveIndex) {
+      return weekDays[lastActiveIndex];
+    }
+    return '${weekDays[firstActiveIndex]} - ${weekDays[lastActiveIndex]}';
+  }
+
   @override
   Widget build(BuildContext context) {
     final isMobile = AppResponsive.isMobile(context);
@@ -74,7 +119,7 @@ class WeeklyAttendanceChart extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header & consistency metric
+              // Header & active streak badge
               Row(
                 children: [
                   Expanded(
@@ -89,11 +134,31 @@ class WeeklyAttendanceChart extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: AppSpacing.sm),
-                  Text(
-                    '5 / 7 Days',
-                    style: AppTextStyles.caption.copyWith(
-                      color: AppColors.textSecondary,
-                      fontWeight: FontWeight.w700,
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
+                    decoration: BoxDecoration(
+                      color: AppColors.lightGreenSurface,
+                      borderRadius: AppRadius.roundedFull,
+                      border: Border.all(color: AppColors.limeAccent.withValues(alpha: 0.35)),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.local_fire_department_rounded,
+                          color: Color(0xFFEA580C),
+                          size: 15,
+                        ),
+                        const SizedBox(width: 3),
+                        Text(
+                          '$activeStreak Day Streak',
+                          style: AppTextStyles.caption.copyWith(
+                            color: AppColors.darkCharcoal,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -196,6 +261,37 @@ class WeeklyAttendanceChart extends StatelessWidget {
                     }),
                   ),
                 ),
+              ),
+              const SizedBox(height: AppSpacing.sm + 4),
+              Row(
+                children: [
+                  const Icon(
+                    Icons.local_fire_department_rounded,
+                    color: Color(0xFFEA580C),
+                    size: 15,
+                  ),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      'Last $activeStreak consecutive days active ($lastActiveRange)',
+                      style: AppTextStyles.caption.copyWith(
+                        color: AppColors.textSecondary,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 11.5,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Text(
+                    '5 / 7 Days',
+                    style: AppTextStyles.caption.copyWith(
+                      color: AppColors.textSecondary,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 11.5,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
