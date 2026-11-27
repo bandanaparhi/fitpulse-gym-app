@@ -2,10 +2,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import '../../../app/providers.dart';
+import '../../../data/repositories/supabase_auth_repository.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_text_styles.dart';
 import '../../../app/theme/app_theme.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../core/utils/app_responsive.dart';
 import '../../../core/utils/validators.dart';
 import '../../../shared/widgets/primary_button.dart';
 
@@ -19,8 +21,8 @@ class LoginScreen extends ConsumerStatefulWidget {
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController(text: AppConstants.demoMemberEmail);
-  final _passwordController = TextEditingController(text: 'Password@123');
+  final _emailController = TextEditingController(text: 'jitu@gmail.com');
+  final _passwordController = TextEditingController(text: 'jitu2005');
 
   bool _obscurePassword = true;
   bool _rememberMe = true;
@@ -54,8 +56,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       if (!mounted) return;
 
       if (result.isSuccess) {
-        ref.read(authStateProvider.notifier).setAuthenticated(true, result.member?.id);
-        context.go('/dashboard');
+        final role = authRepo is SupabaseAuthRepository
+            ? authRepo.currentRole
+            : 'member';
+        ref.read(authStateProvider.notifier).setAuthenticated(
+              true,
+              result.member?.id,
+              role: role,
+            );
+        GoRouter.maybeOf(context)?.go('/dashboard');
       } else {
         setState(() {
           _errorMessage = result.message ?? 'Authentication failed. Please check your credentials.';
@@ -75,24 +84,29 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   void _fillDemoCredentials() {
     setState(() {
-      _emailController.text = AppConstants.demoMemberEmail;
-      _passwordController.text = 'Password@123';
+      _emailController.text = 'jitu@gmail.com';
+      _passwordController.text = 'jitu2005';
       _errorMessage = null;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = AppResponsive.isMobile(context);
+
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.xl),
+            padding: EdgeInsets.symmetric(
+              horizontal: isMobile ? AppSpacing.md : AppSpacing.lg,
+              vertical: isMobile ? AppSpacing.md : AppSpacing.xl,
+            ),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 440),
               child: Container(
-                padding: const EdgeInsets.all(AppSpacing.xl),
+                padding: AppResponsive.cardPaddingLg(context),
                 decoration: BoxDecoration(
                   color: AppColors.cardBackground,
                   borderRadius: AppRadius.roundedLg,
@@ -114,28 +128,29 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       // Gym Logo & App Name
                       Center(
                         child: Container(
-                          width: 52,
-                          height: 52,
+                          width: isMobile ? 42 : 52,
+                          height: isMobile ? 42 : 52,
                           decoration: BoxDecoration(
                             color: AppColors.limeAccent,
                             borderRadius: AppRadius.roundedMd,
                           ),
-                          child: const Icon(Icons.bolt, color: AppColors.darkCharcoal, size: 32),
+                          child: Icon(Icons.bolt, color: AppColors.darkCharcoal, size: isMobile ? 26 : 32),
                         ),
                       ),
-                      const SizedBox(height: AppSpacing.md),
+                      SizedBox(height: isMobile ? AppSpacing.sm : AppSpacing.md),
                       Text(
                         AppConstants.appName,
-                        style: AppTextStyles.h2,
+                        style: isMobile ? AppTextStyles.h3 : AppTextStyles.h2,
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: AppSpacing.xxs),
                       Text(
                         'Member Portal Sign In',
-                        style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
+                        style: (isMobile ? AppTextStyles.bodySmall : AppTextStyles.bodyMedium)
+                            .copyWith(color: AppColors.textSecondary),
                         textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: AppSpacing.lg),
+                      SizedBox(height: isMobile ? AppSpacing.md : AppSpacing.lg),
 
                       // Error Banner if present
                       if (_errorMessage != null) ...[
@@ -174,7 +189,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         textInputAction: TextInputAction.next,
                         validator: AppValidators.validateEmail,
                         decoration: const InputDecoration(
-                          hintText: 'alex.morgan@fitpulse.com',
+                          hintText: 'jitu@gmail.com',
                           prefixIcon: Icon(Icons.mail_outline_rounded, size: 20),
                         ),
                       ),
@@ -285,7 +300,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               const SizedBox(width: 6),
                               Flexible(
                                 child: Text(
-                                  'Demo Login: ${AppConstants.demoMemberName}',
+                                  'Quick Fill: jitu@gmail.com',
                                   style: AppTextStyles.caption.copyWith(
                                     color: AppColors.limeAccentDark,
                                     fontWeight: FontWeight.w700,

@@ -8,11 +8,13 @@ import '../../../../data/models/diet_plan.dart';
 class MealCard extends StatelessWidget {
   final Meal meal;
   final int index;
+  final VoidCallback? onLogMeal;
 
   const MealCard({
     super.key,
     required this.meal,
     required this.index,
+    this.onLogMeal,
   });
 
   IconData _getMealIcon(String name) {
@@ -235,6 +237,23 @@ class MealCard extends StatelessWidget {
                     ),
                   ),
                 ],
+              ),
+            ),
+          ],
+
+          if (onLogMeal != null) ...[
+            const SizedBox(height: AppSpacing.sm + 2),
+            Align(
+              alignment: Alignment.centerRight,
+              child: OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  side: const BorderSide(color: AppColors.limeAccentDark),
+                  foregroundColor: AppColors.limeAccentDark,
+                ),
+                icon: const Icon(Icons.add_task_rounded, size: 15),
+                label: const Text('Log Meal', style: TextStyle(fontSize: 12)),
+                onPressed: onLogMeal,
               ),
             ),
           ],

@@ -4,6 +4,7 @@ import '../../../../app/providers.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_text_styles.dart';
 import '../../../../app/theme/app_theme.dart';
+import '../../../../core/utils/app_responsive.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../data/models/membership.dart';
 import '../../../../shared/widgets/empty_state.dart';
@@ -51,8 +52,16 @@ class _RenewMembershipModalState extends ConsumerState<RenewMembershipModal> {
     _selectedPlanId = widget.currentPlanId;
   }
 
+  String _resolveSelectedPlanId(List<Membership> plans) {
+    if (_selectedPlanId != null && plans.any((p) => p.id == _selectedPlanId)) {
+      return _selectedPlanId!;
+    }
+    return plans.first.id;
+  }
+
   Future<void> _handleConfirmRenewal(List<Membership> plans) async {
-    final plan = plans.firstWhere((p) => p.id == _selectedPlanId, orElse: () => plans.first);
+    final resolvedId = _resolveSelectedPlanId(plans);
+    final plan = plans.firstWhere((p) => p.id == resolvedId, orElse: () => plans.first);
 
     setState(() => _isSubmitting = true);
 
@@ -60,9 +69,12 @@ class _RenewMembershipModalState extends ConsumerState<RenewMembershipModal> {
       final repo = ref.read(memberRepositoryProvider);
       await repo.renewMembership(memberId: widget.memberId, planId: plan.id);
 
-      // Invalidate membership provider to reflect new expiry & plan in UI
+      // Invalidate membership & billing providers to reflect pending renewal request
       ref.invalidate(membershipProvider);
+      ref.invalidate(membershipHistoryProvider);
       ref.invalidate(currentMemberProvider);
+      ref.invalidate(paymentHistoryProvider);
+      ref.invalidate(pendingPaymentAmountProvider);
 
       if (!mounted) return;
 
@@ -70,7 +82,9 @@ class _RenewMembershipModalState extends ConsumerState<RenewMembershipModal> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Membership successfully renewed for ${plan.planName}!'),
+          content: Text(
+            'Renewal request submitted for ${plan.planName}! Pending payment/verification.',
+          ),
           backgroundColor: AppColors.darkCharcoal,
         ),
       );
@@ -168,13 +182,15 @@ class _RenewMembershipModalState extends ConsumerState<RenewMembershipModal> {
                   );
                 }
 
+                final activeSelectionId = _resolveSelectedPlanId(plans);
+
                 return ListView.separated(
-                  padding: const EdgeInsets.all(AppSpacing.xl),
+                  padding: AppResponsive.cardPaddingLg(context),
                   itemCount: plans.length,
                   separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.md),
                   itemBuilder: (context, index) {
                     final plan = plans[index];
-                    final isSelected = plan.id == _selectedPlanId;
+                    final isSelected = plan.id == activeSelectionId;
 
                     return InkWell(
                       onTap: () => setState(() => _selectedPlanId = plan.id),

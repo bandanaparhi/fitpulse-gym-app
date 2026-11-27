@@ -5,6 +5,8 @@ import '../../../app/providers.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_text_styles.dart';
 import '../../../app/theme/app_theme.dart';
+import '../../../core/utils/app_responsive.dart';
+import '../../../core/utils/formatters.dart';
 import '../../../data/models/gym_class.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_state.dart';
@@ -32,6 +34,7 @@ class _ClassListingScreenState extends ConsumerState<ClassListingScreen> {
   String _selectedDateFilter = 'All Dates';
   String _selectedCategory = 'All Categories';
   bool _availableOnly = false;
+  bool _timetableView = false;
 
   List<GymClass> _applyFilters(List<GymClass> classes) {
     final now = DateTime.now();
@@ -100,48 +103,38 @@ class _ClassListingScreenState extends ConsumerState<ClassListingScreen> {
         final filteredClasses = _applyFilters(classes);
 
         return SingleChildScrollView(
-          padding: const EdgeInsets.all(AppSpacing.lg),
+          padding: AppResponsive.pagePadding(context),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header Row with "My Bookings" Button
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Expanded(
-                    child: PageHeader(
-                      title: 'Classes & Studio Schedules',
-                      subtitle:
-                          'Browse group fitness classes, reserve your spot, and view studio timetables.',
+              PageHeader(
+                title: 'Classes & Studio Schedules',
+                subtitle:
+                    'Browse group fitness classes, reserve your spot, and view studio timetables.',
+                trailing: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.darkCharcoal,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.md,
+                      vertical: 10,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppRadius.md),
                     ),
                   ),
-                  const SizedBox(width: AppSpacing.md),
-                  ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.darkCharcoal,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.lg,
-                        vertical: AppSpacing.md,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppRadius.md),
-                      ),
-                    ),
-                    icon: const Icon(
-                      Icons.confirmation_number_outlined,
-                      size: 18,
-                    ),
-                    label: Text(
-                      'My Bookings ($upcomingBookingsCount)',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    onPressed: () => context.go('/classes/bookings'),
+                  icon: const Icon(
+                    Icons.confirmation_number_outlined,
+                    size: 16,
                   ),
-                ],
+                  label: Text(
+                    'My Bookings ($upcomingBookingsCount)',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  onPressed: () => context.go('/classes/bookings'),
+                ),
               ),
-
-              const SizedBox(height: AppSpacing.lg),
 
               // Filter Controls Bar
               ClassFilterBar(
@@ -161,31 +154,61 @@ class _ClassListingScreenState extends ConsumerState<ClassListingScreen> {
 
               const SizedBox(height: AppSpacing.xl),
 
-              // Filter count info
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              // Filter count info + Cards / Timetable View switcher
+              Wrap(
+                alignment: WrapAlignment.spaceBetween,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: AppSpacing.sm,
+                runSpacing: AppSpacing.xs,
                 children: [
-                  Expanded(
-                    child: Text(
-                      'Available Classes (${filteredClasses.length})',
-                      style: AppTextStyles.h3,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                  Text(
+                    'Available Classes (${filteredClasses.length})',
+                    style: AppTextStyles.h3,
                   ),
-                  if (_selectedCategory != 'All Categories' ||
-                      _selectedDateFilter != 'All Dates' ||
-                      _availableOnly)
-                    TextButton(
-                      onPressed: () {
-                        setState(() {
-                          _selectedDateFilter = 'All Dates';
-                          _selectedCategory = 'All Categories';
-                          _availableOnly = false;
-                        });
-                      },
-                      child: const Text('Reset Filters'),
-                    ),
+                  Wrap(
+                    spacing: AppSpacing.xs,
+                    runSpacing: AppSpacing.xs,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      if (_selectedCategory != 'All Categories' ||
+                          _selectedDateFilter != 'All Dates' ||
+                          _availableOnly)
+                        TextButton(
+                          onPressed: () {
+                            setState(() {
+                              _selectedDateFilter = 'All Dates';
+                              _selectedCategory = 'All Categories';
+                              _availableOnly = false;
+                            });
+                          },
+                          child: const Text('Reset Filters'),
+                        ),
+                      ChoiceChip(
+                        label: const Text('Cards'),
+                        selected: !_timetableView,
+                        selectedColor: AppColors.darkCharcoal,
+                        labelStyle: AppTextStyles.caption.copyWith(
+                          color: !_timetableView
+                              ? Colors.white
+                              : AppColors.textPrimary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        onSelected: (_) => setState(() => _timetableView = false),
+                      ),
+                      ChoiceChip(
+                        label: const Text('Timetable'),
+                        selected: _timetableView,
+                        selectedColor: AppColors.darkCharcoal,
+                        labelStyle: AppTextStyles.caption.copyWith(
+                          color: _timetableView
+                              ? Colors.white
+                              : AppColors.textPrimary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        onSelected: (_) => setState(() => _timetableView = true),
+                      ),
+                    ],
+                  ),
                 ],
               ),
 
@@ -209,6 +232,12 @@ class _ClassListingScreenState extends ConsumerState<ClassListingScreen> {
                       });
                     },
                   ),
+                )
+              else if (_timetableView)
+                _GroupClassTimetable(
+                  classes: filteredClasses,
+                  bookedClassIds: bookedClassIds,
+                  onBook: _handleBookClass,
                 )
               else
                 LayoutBuilder(
@@ -304,5 +333,142 @@ class _ClassListingScreenState extends ConsumerState<ClassListingScreen> {
         );
       }
     }
+  }
+}
+
+class _GroupClassTimetable extends StatelessWidget {
+  final List<GymClass> classes;
+  final Set<String> bookedClassIds;
+  final ValueChanged<GymClass> onBook;
+
+  const _GroupClassTimetable({
+    required this.classes,
+    required this.bookedClassIds,
+    required this.onBook,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final sorted = List<GymClass>.from(classes)
+      ..sort((a, b) => a.startTime.compareTo(b.startTime));
+
+    final Map<String, List<GymClass>> grouped = {};
+    for (final c in sorted) {
+      final label = AppFormatters.formatDate(c.startTime);
+      grouped.putIfAbsent(label, () => []).add(c);
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: grouped.entries.map((entry) {
+        return Container(
+          margin: const EdgeInsets.only(bottom: AppSpacing.md),
+          padding: const EdgeInsets.all(AppSpacing.md),
+          decoration: BoxDecoration(
+            color: AppColors.cardBackground,
+            borderRadius: BorderRadius.circular(AppRadius.lg),
+            border: Border.all(color: AppColors.borderSubtle),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(
+                    Icons.calendar_today_rounded,
+                    size: 16,
+                    color: AppColors.limeAccentDark,
+                  ),
+                  const SizedBox(width: AppSpacing.xs),
+                  Expanded(
+                    child: Text(
+                      entry.key,
+                      style: AppTextStyles.titleMedium.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              const Divider(color: AppColors.borderSubtle, height: 1),
+              const SizedBox(height: AppSpacing.sm),
+              ...entry.value.map((gymClass) {
+                final isBooked = bookedClassIds.contains(gymClass.id);
+                return Container(
+                  margin: const EdgeInsets.only(bottom: AppSpacing.xs),
+                  padding: const EdgeInsets.all(AppSpacing.sm),
+                  decoration: BoxDecoration(
+                    color: AppColors.cardSubtleBg,
+                    borderRadius: BorderRadius.circular(AppRadius.md),
+                    border: Border.all(color: AppColors.borderSubtle),
+                  ),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final details = Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${AppFormatters.formatTime(gymClass.startTime)} • ${gymClass.durationMinutes} min • ${gymClass.room}',
+                            style: AppTextStyles.caption.copyWith(
+                              color: AppColors.limeAccentDark,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            gymClass.title,
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            '${gymClass.trainerName} • ${gymClass.spotsRemaining}/${gymClass.capacity} spots left',
+                            style: AppTextStyles.caption.copyWith(
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                        ],
+                      );
+
+                      final actionBtn = isBooked
+                          ? const Chip(label: Text('Reserved'))
+                          : (gymClass.isFull
+                              ? const Chip(label: Text('Class Full'))
+                              : ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.darkCharcoal,
+                                    foregroundColor: Colors.white,
+                                  ),
+                                  onPressed: () => onBook(gymClass),
+                                  child: const Text('Book'),
+                                ));
+
+                      if (constraints.maxWidth >= 520) {
+                        return Row(
+                          children: [
+                            Expanded(child: details),
+                            const SizedBox(width: AppSpacing.sm),
+                            actionBtn,
+                          ],
+                        );
+                      }
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          details,
+                          const SizedBox(height: AppSpacing.xs),
+                          actionBtn,
+                        ],
+                      );
+                    },
+                  ),
+                );
+              }),
+            ],
+          ),
+        );
+      }).toList(),
+    );
   }
 }

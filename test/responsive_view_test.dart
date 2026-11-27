@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:app/features/landing/landing_page.dart';
 import 'package:app/features/auth/presentation/login_screen.dart';
@@ -12,6 +13,14 @@ import 'package:app/features/attendance/presentation/attendance_screen.dart';
 import 'package:app/features/workouts/presentation/workout_overview_screen.dart';
 import 'package:app/features/workouts/presentation/workout_details_screen.dart';
 import 'package:app/features/workouts/presentation/active_workout_screen.dart';
+import 'package:app/features/workouts/presentation/fitness_profile_screen.dart';
+import 'package:app/features/workouts/presentation/weekly_plan_screen.dart';
+import 'package:app/features/workouts/presentation/today_workout_screen.dart';
+import 'package:app/features/workouts/presentation/exercise_details_screen.dart';
+import 'package:app/features/workouts/presentation/planner_active_workout_screen.dart';
+import 'package:app/features/workouts/presentation/workout_history_screen.dart';
+import 'package:app/features/workouts/presentation/personal_records_screen.dart';
+import 'package:app/features/workouts/presentation/training_progress_screen.dart';
 import 'package:app/features/progress/presentation/progress_screen.dart';
 import 'package:app/features/diet/presentation/diet_plan_screen.dart';
 import 'package:app/features/classes/presentation/class_listing_screen.dart';
@@ -28,6 +37,10 @@ import 'package:app/features/settings/presentation/settings_screen.dart';
 import 'package:app/features/support/presentation/support_screen.dart';
 
 void main() {
+  setUpAll(() {
+    SharedPreferences.setMockInitialValues({});
+  });
+
   const viewports = <String, Size>{
     'Desktop (1280x800)': Size(1280, 800),
     'Tablet (800x1024)': Size(800, 1024),
@@ -45,6 +58,14 @@ void main() {
     'Workout Overview (/workouts)': () => const WorkoutOverviewScreen(),
     'Workout Details (/workouts/details)': () => const WorkoutDetailsScreen(workoutId: 'WK-01'),
     'Active Workout (/workouts/active)': () => const ActiveWorkoutScreen(workoutId: 'WK-01'),
+    'Fitness Profile (/workouts/profile)': () => const FitnessProfileScreen(),
+    'My Weekly Plan (/workouts/weekly-plan)': () => const WeeklyPlanScreen(),
+    'Today Workout (/workouts/today)': () => const TodayWorkoutScreen(),
+    'Exercise Details (/workouts/exercise)': () => const ExerciseDetailsScreen(exerciseId: 'ex_bench_press'),
+    'Planner Active Workout (/workouts/session/active)': () => const PlannerActiveWorkoutScreen(sessionId: 'SES-ADV-U1'),
+    'Workout History (/workouts/history)': () => const WorkoutHistoryScreen(),
+    'Personal Records (/workouts/records)': () => const PersonalRecordsScreen(),
+    'Training Progress (/workouts/training-progress)': () => const TrainingProgressScreen(),
     'Progress Screen (/progress)': () => const ProgressScreen(),
     'Diet Plan Screen (/diet)': () => const DietPlanScreen(),
     'Classes Listing (/classes)': () => const ClassListingScreen(),

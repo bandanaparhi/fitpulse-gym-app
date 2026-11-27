@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_text_styles.dart';
 import '../../../../app/theme/app_theme.dart';
+import '../../../../core/utils/app_responsive.dart';
 import '../../../../data/models/trainer.dart';
 import '../../../../shared/widgets/primary_button.dart';
 import 'trainer_contact_dialog.dart';
@@ -25,7 +26,7 @@ class TrainerProfileCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppRadius.lg),
         border: Border.all(color: AppColors.borderSubtle),
       ),
-      padding: const EdgeInsets.all(AppSpacing.xl),
+      padding: AppResponsive.cardPaddingLg(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

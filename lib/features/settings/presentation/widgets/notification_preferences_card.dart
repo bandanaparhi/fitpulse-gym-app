@@ -4,6 +4,7 @@ import '../../../../app/providers.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_text_styles.dart';
 import '../../../../app/theme/app_theme.dart';
+import '../../../../core/utils/app_responsive.dart';
 import '../../../../data/models/notification_preferences.dart';
 import '../../../../shared/widgets/loading_indicator.dart';
 import '../../../../shared/widgets/primary_button.dart';
@@ -140,7 +141,7 @@ class _NotificationPreferencesCardState
         borderRadius: BorderRadius.circular(AppRadius.lg),
         border: Border.all(color: AppColors.borderSubtle),
       ),
-      padding: const EdgeInsets.all(AppSpacing.xl),
+      padding: AppResponsive.cardPaddingLg(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -214,7 +215,7 @@ class _NotificationPreferencesCardState
                     icon: Icons.card_membership_rounded,
                     title: 'Membership Reminders',
                     subtitle:
-                        'Upcoming renewals, expiration notices, and tier status alerts.',
+                        'Membership expiry notices, upcoming renewals, and tier status alerts.',
                     value: current.membershipReminders,
                     onChanged: (val) {
                       setState(() {
@@ -248,6 +249,34 @@ class _NotificationPreferencesCardState
                       setState(() {
                         _localPreferences = current.copyWith(
                           workoutReminders: val,
+                        );
+                      });
+                    },
+                  ),
+                  _buildPreferenceTile(
+                    icon: Icons.water_drop_outlined,
+                    title: 'Water Intake Reminders',
+                    subtitle:
+                        'Daily hydration target alerts and fluid intake check-in nudges.',
+                    value: current.waterIntakeReminders,
+                    onChanged: (val) {
+                      setState(() {
+                        _localPreferences = current.copyWith(
+                          waterIntakeReminders: val,
+                        );
+                      });
+                    },
+                  ),
+                  _buildPreferenceTile(
+                    icon: Icons.restaurant_menu_rounded,
+                    title: 'Diet & Meal Reminders',
+                    subtitle:
+                        'Breakfast, lunch, and dinner schedule alerts plus macro logging reminders.',
+                    value: current.dietReminders,
+                    onChanged: (val) {
+                      setState(() {
+                        _localPreferences = current.copyWith(
+                          dietReminders: val,
                         );
                       });
                     },

@@ -33,6 +33,8 @@ class NotificationItemCard extends StatelessWidget {
         return Icons.card_membership_rounded;
       case 'diet':
         return Icons.restaurant_menu_rounded;
+      case 'water':
+        return Icons.water_drop_rounded;
       case 'announcement':
         return Icons.campaign_rounded;
       default:
@@ -54,6 +56,8 @@ class NotificationItemCard extends StatelessWidget {
         return AppColors.darkCharcoal;
       case 'diet':
         return AppColors.warning;
+      case 'water':
+        return AppColors.info;
       default:
         return AppColors.darkCharcoal;
     }

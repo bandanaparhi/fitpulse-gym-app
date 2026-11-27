@@ -6,6 +6,7 @@ import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_text_styles.dart';
 import '../../../app/theme/app_theme.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../core/utils/app_responsive.dart';
 import '../../../core/utils/validators.dart';
 import '../../../shared/widgets/primary_button.dart';
 import '../../../shared/widgets/secondary_button.dart';
@@ -72,12 +73,17 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = AppResponsive.isMobile(context);
+
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.xl),
+            padding: EdgeInsets.symmetric(
+              horizontal: isMobile ? AppSpacing.md : AppSpacing.lg,
+              vertical: isMobile ? AppSpacing.md : AppSpacing.xl,
+            ),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 440),
               child: _emailSent ? _buildConfirmationCard() : _buildRequestForm(),
@@ -90,7 +96,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
 
   Widget _buildRequestForm() {
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.xl),
+      padding: AppResponsive.cardPaddingLg(context),
       decoration: BoxDecoration(
         color: AppColors.cardBackground,
         borderRadius: AppRadius.roundedLg,

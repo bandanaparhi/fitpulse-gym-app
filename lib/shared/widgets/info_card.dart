@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_text_styles.dart';
 import '../../app/theme/app_theme.dart';
+import '../../core/utils/app_responsive.dart';
 
 /// Reusable clean card container with subtle borders for dashboard sections.
 class InfoCard extends StatelessWidget {
@@ -10,7 +11,7 @@ class InfoCard extends StatelessWidget {
   final IconData? icon;
   final Widget? trailing;
   final Widget child;
-  final EdgeInsetsGeometry padding;
+  final EdgeInsetsGeometry? padding;
   final VoidCallback? onTap;
 
   const InfoCard({
@@ -20,12 +21,16 @@ class InfoCard extends StatelessWidget {
     this.icon,
     this.trailing,
     required this.child,
-    this.padding = const EdgeInsets.all(AppSpacing.lg),
+    this.padding,
     this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = AppResponsive.isMobile(context);
+    final resolvedPadding = padding ?? AppResponsive.cardPadding(context);
+    final headerGap = isMobile ? AppSpacing.sm + 2 : AppSpacing.md;
+
     Widget cardContent = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -36,12 +41,12 @@ class InfoCard extends StatelessWidget {
             children: [
               if (icon != null) ...[
                 Container(
-                  padding: const EdgeInsets.all(AppSpacing.xs + 2),
+                  padding: EdgeInsets.all(isMobile ? 5 : AppSpacing.xs + 2),
                   decoration: BoxDecoration(
                     color: AppColors.limeAccent.withValues(alpha: 0.15),
                     borderRadius: AppRadius.roundedSm,
                   ),
-                  child: Icon(icon, size: 18, color: AppColors.limeAccentDark),
+                  child: Icon(icon, size: isMobile ? 15 : 18, color: AppColors.limeAccentDark),
                 ),
                 const SizedBox(width: AppSpacing.sm),
               ],
@@ -50,10 +55,20 @@ class InfoCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(title!, style: AppTextStyles.titleMedium),
+                      Text(
+                        title!,
+                        style: isMobile
+                            ? AppTextStyles.titleMedium.copyWith(fontSize: 13.5)
+                            : AppTextStyles.titleMedium,
+                      ),
                       if (subtitle != null) ...[
                         const SizedBox(height: 2),
-                        Text(subtitle!, style: AppTextStyles.bodySmall),
+                        Text(
+                          subtitle!,
+                          style: isMobile
+                              ? AppTextStyles.bodySmall.copyWith(fontSize: 11)
+                              : AppTextStyles.bodySmall,
+                        ),
                       ],
                     ],
                   ),
@@ -61,9 +76,9 @@ class InfoCard extends StatelessWidget {
               ?trailing,
             ],
           ),
-          const SizedBox(height: AppSpacing.md),
+          SizedBox(height: headerGap),
           const Divider(color: AppColors.borderSubtle, height: 1),
-          const SizedBox(height: AppSpacing.md),
+          SizedBox(height: headerGap),
         ],
         child,
       ],
@@ -72,16 +87,16 @@ class InfoCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.cardBackground,
-        borderRadius: AppRadius.roundedLg,
+        borderRadius: isMobile ? AppRadius.roundedMd : AppRadius.roundedLg,
         border: Border.all(color: AppColors.borderSubtle, width: 1),
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: AppRadius.roundedLg,
+          borderRadius: isMobile ? AppRadius.roundedMd : AppRadius.roundedLg,
           child: Padding(
-            padding: padding,
+            padding: resolvedPadding,
             child: cardContent,
           ),
         ),

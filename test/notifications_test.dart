@@ -56,6 +56,19 @@ void main() {
       expect(find.text('Lean Muscle Diet Protocol Assigned'), findsOneWidget);
       expect(find.text('View Diet Plan'), findsOneWidget);
 
+      expect(find.text('Water Intake Reminder'), findsOneWidget);
+      expect(find.text('Log Water Intake'), findsOneWidget);
+
+      expect(find.text('Gym Announcement: Holiday Schedule & Maintenance'), findsOneWidget);
+      expect(find.text('Read Notice'), findsOneWidget);
+
+      expect(find.text('Membership Expiry & Renewal Reminder'), findsOneWidget);
+      expect(find.text('Review Renewal'), findsOneWidget);
+
+      expect(find.text('Active Reminder Channels'), findsOneWidget);
+      expect(find.text('Water Intake: ON'), findsOneWidget);
+      expect(find.text('Diet: ON'), findsOneWidget);
+
       // "Mark as Read" buttons are visible on unread notifications
       expect(find.text('Mark as Read'), findsWidgets);
       // Bulk "Mark All as Read" button

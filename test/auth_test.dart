@@ -117,5 +117,26 @@ void main() {
       expect(find.text('Return to Sign In'), findsOneWidget);
       expect(find.text('Resend Email'), findsOneWidget);
     });
+
+    testWidgets('LoginScreen signs in with jitu@gmail.com and jitu2005', (tester) async {
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: MaterialApp(
+            home: LoginScreen(),
+          ),
+        ),
+      );
+
+      expect(find.text('jitu@gmail.com'), findsWidgets);
+      expect(find.text('jitu2005'), findsOneWidget);
+      expect(find.text('Quick Fill: jitu@gmail.com'), findsOneWidget);
+
+      await tester.tap(find.text('Sign In'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 700));
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('Incorrect'), findsNothing);
+    });
   });
 }

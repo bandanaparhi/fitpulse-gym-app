@@ -4,15 +4,23 @@ import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_text_styles.dart';
 import '../../app/theme/app_theme.dart';
 
-/// Touch-friendly bottom navigation bar for mobile screens.
+/// Touch-friendly bottom navigation bar for mobile screens conforming to
+/// the FitPulse commercial redesign.
+///
+/// 5 tabs:
+/// 1. Home (/dashboard)
+/// 2. Workouts (/workouts)
+/// 3. Check-in (/attendance with prominent lime QR button)
+/// 4. Classes (/classes)
+/// 5. More (opens drawer / full navigation sheet)
 class AppBottomNav extends StatelessWidget {
   final String currentRoute;
-  final VoidCallback? onOpenMenu;
+  final VoidCallback? onMorePressed;
 
   const AppBottomNav({
     super.key,
     required this.currentRoute,
-    this.onOpenMenu,
+    this.onMorePressed,
   });
 
   @override
@@ -27,38 +35,45 @@ class AppBottomNav extends StatelessWidget {
         child: SizedBox(
           height: 60,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildTab(
-                context: context,
-                label: 'Dashboard',
-                icon: Icons.dashboard_outlined,
-                activeIcon: Icons.dashboard,
-                route: '/dashboard',
+              Expanded(
+                child: _buildTab(
+                  context: context,
+                  label: 'Home',
+                  icon: Icons.grid_view_rounded,
+                  activeIcon: Icons.grid_view_rounded,
+                  route: '/dashboard',
+                ),
               ),
-              _buildTab(
-                context: context,
-                label: 'Workouts',
-                icon: Icons.fitness_center_outlined,
-                activeIcon: Icons.fitness_center,
-                route: '/workouts',
+              Expanded(
+                child: _buildTab(
+                  context: context,
+                  label: 'Workouts',
+                  icon: Icons.fitness_center_outlined,
+                  activeIcon: Icons.fitness_center_rounded,
+                  route: '/workouts',
+                ),
               ),
-              _buildCenterQrTab(
-                context: context,
-                currentRoute: currentRoute,
+              Expanded(
+                child: _buildCenterQrTab(
+                  context: context,
+                  currentRoute: currentRoute,
+                ),
               ),
-              _buildTab(
-                context: context,
-                label: 'Classes',
-                icon: Icons.calendar_month_outlined,
-                activeIcon: Icons.calendar_month,
-                route: '/classes',
+              Expanded(
+                child: _buildTab(
+                  context: context,
+                  label: 'Classes',
+                  icon: Icons.calendar_month_outlined,
+                  activeIcon: Icons.calendar_month_rounded,
+                  route: '/classes',
+                ),
               ),
-              _buildMenuTab(
-                context: context,
-                label: 'More',
-                icon: Icons.menu_rounded,
-                onTap: onOpenMenu ?? () => context.go('/profile'),
+              Expanded(
+                child: _buildMoreTab(
+                  context: context,
+                  currentRoute: currentRoute,
+                ),
               ),
             ],
           ),
@@ -80,46 +95,46 @@ class AppBottomNav extends StatelessWidget {
         }
       },
       borderRadius: BorderRadius.circular(AppRadius.full),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(7),
-              decoration: BoxDecoration(
-                color: isActive ? AppColors.limeAccent : AppColors.darkElevated,
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: AppColors.limeAccent,
-                  width: 1.5,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: isActive ? AppColors.limeAccent : AppColors.darkElevated,
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: AppColors.limeAccent,
+                width: 1.5,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.limeAccent.withValues(alpha: isActive ? 0.4 : 0.15),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.limeAccent.withValues(alpha: isActive ? 0.35 : 0.15),
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Icon(
-                Icons.qr_code_scanner_rounded,
-                size: 20,
-                color: isActive ? AppColors.darkCharcoal : AppColors.limeAccent,
-              ),
+              ],
             ),
-            const SizedBox(height: 2),
-            Text(
-              'Check-In',
-              style: AppTextStyles.caption.copyWith(
-                color: isActive ? AppColors.limeAccent : AppColors.textOnDarkMuted,
-                fontSize: 10,
-                fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
-              ),
+            child: Icon(
+              Icons.qr_code_scanner_rounded,
+              size: 20,
+              color: isActive ? AppColors.darkCharcoal : AppColors.limeAccent,
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 3),
+          Text(
+            'Check-in',
+            maxLines: 1,
+            softWrap: false,
+            overflow: TextOverflow.ellipsis,
+            style: AppTextStyles.caption.copyWith(
+              color: isActive ? AppColors.limeAccent : AppColors.textOnDarkMuted,
+              fontSize: 10,
+              fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -139,73 +154,77 @@ class AppBottomNav extends StatelessWidget {
           context.go(route);
         }
       },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              isActive ? activeIcon : icon,
-              size: 22,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            isActive ? activeIcon : icon,
+            size: 22,
+            color: isActive ? AppColors.limeAccent : AppColors.textOnDarkMuted,
+          ),
+          const SizedBox(height: 3),
+          Text(
+            label,
+            maxLines: 1,
+            softWrap: false,
+            overflow: TextOverflow.ellipsis,
+            style: AppTextStyles.caption.copyWith(
               color: isActive ? AppColors.limeAccent : AppColors.textOnDarkMuted,
+              fontSize: 10.5,
+              fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
             ),
-            const SizedBox(height: 3),
-            Text(
-              label,
-              style: AppTextStyles.caption.copyWith(
-                color: isActive ? AppColors.limeAccent : AppColors.textOnDarkMuted,
-                fontSize: 10,
-                fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildMenuTab({
+  Widget _buildMoreTab({
     required BuildContext context,
-    required String label,
-    required IconData icon,
-    required VoidCallback onTap,
+    required String currentRoute,
   }) {
-    final isSecondaryRoute = currentRoute == '/profile' ||
-        currentRoute == '/settings' ||
-        currentRoute == '/support' ||
-        currentRoute == '/membership' ||
-        currentRoute == '/diet-plan' ||
-        currentRoute == '/progress' ||
-        currentRoute == '/trainer' ||
-        currentRoute == '/payments' ||
-        currentRoute == '/notifications' ||
-        currentRoute == '/announcements';
+    // Check if current route is one of the secondary routes accessed via More
+    final isSecondaryRoute = currentRoute.startsWith('/membership') ||
+        currentRoute.startsWith('/progress') ||
+        currentRoute.startsWith('/diet-plan') ||
+        currentRoute.startsWith('/trainer') ||
+        currentRoute.startsWith('/payments') ||
+        currentRoute.startsWith('/announcements') ||
+        currentRoute.startsWith('/profile') ||
+        currentRoute.startsWith('/settings') ||
+        currentRoute.startsWith('/support');
 
     return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              icon,
-              size: 22,
+      onTap: () {
+        if (onMorePressed != null) {
+          onMorePressed!();
+        } else {
+          Scaffold.of(context).openDrawer();
+        }
+      },
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.menu_rounded,
+            size: 22,
+            color: isSecondaryRoute ? AppColors.limeAccent : AppColors.textOnDarkMuted,
+          ),
+          const SizedBox(height: 3),
+          Text(
+            'More',
+            maxLines: 1,
+            softWrap: false,
+            overflow: TextOverflow.ellipsis,
+            style: AppTextStyles.caption.copyWith(
               color: isSecondaryRoute ? AppColors.limeAccent : AppColors.textOnDarkMuted,
+              fontSize: 10.5,
+              fontWeight: isSecondaryRoute ? FontWeight.w700 : FontWeight.w500,
             ),
-            const SizedBox(height: 3),
-            Text(
-              label,
-              style: AppTextStyles.caption.copyWith(
-                color: isSecondaryRoute ? AppColors.limeAccent : AppColors.textOnDarkMuted,
-                fontSize: 10,
-                fontWeight: isSecondaryRoute ? FontWeight.w600 : FontWeight.w400,
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

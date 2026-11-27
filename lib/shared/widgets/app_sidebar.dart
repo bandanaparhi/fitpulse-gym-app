@@ -19,7 +19,8 @@ class SidebarItem {
   });
 }
 
-/// Left sidebar navigation for desktop and tablet screens.
+/// Left sidebar navigation for desktop and tablet screens conforming to
+/// the FitPulse commercial redesign.
 class AppSidebar extends StatelessWidget {
   final String currentRoute;
   final bool isCollapsed;
@@ -32,29 +33,38 @@ class AppSidebar extends StatelessWidget {
     this.onToggleCollapse,
   });
 
-  static const List<SidebarItem> primaryNav = [
+  static const List<SidebarItem> overviewNav = [
     SidebarItem(label: 'Dashboard', icon: Icons.dashboard_outlined, route: '/dashboard'),
     SidebarItem(label: 'Membership', icon: Icons.card_membership_outlined, route: '/membership'),
     SidebarItem(label: 'Attendance', icon: Icons.qr_code_scanner_outlined, route: '/attendance'),
-    SidebarItem(label: 'Workouts', icon: Icons.fitness_center_outlined, route: '/workouts'),
-    SidebarItem(label: 'Fitness Progress', icon: Icons.trending_up_outlined, route: '/progress'),
-    SidebarItem(label: 'Diet Plan', icon: Icons.restaurant_outlined, route: '/diet-plan'),
-    SidebarItem(label: 'Classes & Bookings', icon: Icons.calendar_month_outlined, route: '/classes'),
-    SidebarItem(label: 'My Trainer', icon: Icons.sports_outlined, route: '/trainer'),
-    SidebarItem(label: 'Payments', icon: Icons.receipt_long_outlined, route: '/payments'),
   ];
 
-  static const List<SidebarItem> secondaryNav = [
-    SidebarItem(label: 'Notifications', icon: Icons.notifications_none_outlined, route: '/notifications', badgeCount: 2),
+  static const List<SidebarItem> trainingNav = [
+    SidebarItem(label: 'Workouts', icon: Icons.fitness_center_outlined, route: '/workouts'),
+    SidebarItem(label: 'Fitness Progress', icon: Icons.trending_up_outlined, route: '/progress'),
+    SidebarItem(label: 'Nutrition', icon: Icons.restaurant_outlined, route: '/diet-plan'),
+    SidebarItem(label: 'Classes', icon: Icons.calendar_month_outlined, route: '/classes'),
+    SidebarItem(label: 'My Trainer', icon: Icons.sports_outlined, route: '/trainer'),
+  ];
+
+  static const List<SidebarItem> accountNav = [
+    SidebarItem(label: 'Payments', icon: Icons.receipt_long_outlined, route: '/payments'),
     SidebarItem(label: 'Announcements', icon: Icons.campaign_outlined, route: '/announcements'),
-    SidebarItem(label: 'Profile', icon: Icons.person_outline, route: '/profile'),
     SidebarItem(label: 'Settings', icon: Icons.settings_outlined, route: '/settings'),
     SidebarItem(label: 'Help & Support', icon: Icons.help_outline, route: '/support'),
   ];
 
+  // For backward compatibility with drawer & tests
+  static List<SidebarItem> get primaryNav => [...overviewNav, ...trainingNav];
+  static List<SidebarItem> get secondaryNav => [
+        const SidebarItem(label: 'Notifications', icon: Icons.notifications_none_outlined, route: '/notifications', badgeCount: 2),
+        ...accountNav,
+        const SidebarItem(label: 'Profile', icon: Icons.person_outline, route: '/profile'),
+      ];
+
   @override
   Widget build(BuildContext context) {
-    final width = isCollapsed ? 76.0 : 260.0;
+    final width = isCollapsed ? 76.0 : 256.0;
 
     return Container(
       width: width,
@@ -71,25 +81,17 @@ class AppSidebar extends StatelessWidget {
             child: ListView(
               padding: const EdgeInsets.symmetric(vertical: AppSpacing.md, horizontal: AppSpacing.sm),
               children: [
+                ...overviewNav.map((item) => _buildNavItem(context, item)),
+                const SizedBox(height: AppSpacing.sm),
                 if (!isCollapsed)
-                  Padding(
-                    padding: const EdgeInsets.only(left: AppSpacing.sm, bottom: AppSpacing.xs),
-                    child: Text(
-                      'MAIN MENU',
-                      style: AppTextStyles.caption.copyWith(color: AppColors.textOnDarkMuted, letterSpacing: 1.1),
-                    ),
-                  ),
-                ...primaryNav.map((item) => _buildNavItem(context, item)),
-                const SizedBox(height: AppSpacing.md),
+                  const Divider(color: AppColors.darkBorder, height: 1, indent: 8, endIndent: 8),
+                const SizedBox(height: AppSpacing.sm),
+                ...trainingNav.map((item) => _buildNavItem(context, item)),
+                const SizedBox(height: AppSpacing.sm),
                 if (!isCollapsed)
-                  Padding(
-                    padding: const EdgeInsets.only(left: AppSpacing.sm, bottom: AppSpacing.xs),
-                    child: Text(
-                      'PREFERENCES',
-                      style: AppTextStyles.caption.copyWith(color: AppColors.textOnDarkMuted, letterSpacing: 1.1),
-                    ),
-                  ),
-                ...secondaryNav.map((item) => _buildNavItem(context, item)),
+                  const Divider(color: AppColors.darkBorder, height: 1, indent: 8, endIndent: 8),
+                const SizedBox(height: AppSpacing.sm),
+                ...accountNav.map((item) => _buildNavItem(context, item)),
               ],
             ),
           ),
@@ -128,12 +130,22 @@ class AppSidebar extends StatelessWidget {
                 children: [
                   Text(
                     AppConstants.appName,
-                    style: AppTextStyles.titleMedium.copyWith(color: AppColors.textOnDark, fontWeight: FontWeight.w700),
+                    style: AppTextStyles.titleMedium.copyWith(
+                      color: AppColors.textOnDark,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 16,
+                      letterSpacing: -0.2,
+                    ),
                     maxLines: 1,
                   ),
                   Text(
                     'MEMBER PORTAL',
-                    style: AppTextStyles.caption.copyWith(color: AppColors.limeAccent, letterSpacing: 0.8),
+                    style: AppTextStyles.caption.copyWith(
+                      color: AppColors.limeAccent,
+                      letterSpacing: 0.8,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 10,
+                    ),
                   ),
                 ],
               ),
@@ -163,11 +175,12 @@ class AppSidebar extends StatelessWidget {
             },
             borderRadius: AppRadius.roundedMd,
             child: Container(
-              height: 44,
+              height: 42,
               padding: EdgeInsets.symmetric(horizontal: isCollapsed ? AppSpacing.sm : AppSpacing.md),
               decoration: BoxDecoration(
+                borderRadius: AppRadius.roundedMd,
                 border: isActive
-                    ? const Border(left: BorderSide(color: AppColors.limeAccent, width: 3.5))
+                    ? Border.all(color: AppColors.limeAccent.withValues(alpha: 0.3), width: 1)
                     : null,
               ),
               child: Row(
@@ -175,7 +188,7 @@ class AppSidebar extends StatelessWidget {
                 children: [
                   Icon(
                     item.icon,
-                    size: 20,
+                    size: 19,
                     color: isActive ? AppColors.limeAccent : AppColors.textOnDarkMuted,
                   ),
                   if (!isCollapsed) ...[
@@ -185,7 +198,8 @@ class AppSidebar extends StatelessWidget {
                         item.label,
                         style: AppTextStyles.bodyMedium.copyWith(
                           color: isActive ? AppColors.textOnDark : AppColors.textOnDarkMuted,
-                          fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+                          fontWeight: isActive ? FontWeight.w700 : FontWeight.w400,
+                          fontSize: 13.5,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -239,7 +253,7 @@ class AppSidebar extends StatelessWidget {
               backgroundColor: AppColors.darkElevated,
               child: Text(
                 'AM',
-                style: AppTextStyles.badge.copyWith(color: AppColors.limeAccent),
+                style: AppTextStyles.badge.copyWith(color: AppColors.limeAccent, fontWeight: FontWeight.w700),
               ),
             ),
             const SizedBox(width: AppSpacing.sm),

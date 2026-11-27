@@ -1033,6 +1033,36 @@ class MockData {
       actionRoute: '/diet-plan',
       actionLabel: 'View Diet Plan',
     ),
+    NotificationItem(
+      id: 'NOTIF-07',
+      title: 'Water Intake Reminder',
+      message: 'Stay hydrated toward your 3.0 L daily target. Log your water intake in Fitness Progress.',
+      timestamp: DateTime.now().subtract(const Duration(days: 7, hours: 2)),
+      isRead: true,
+      type: 'water',
+      actionRoute: '/progress',
+      actionLabel: 'Log Water Intake',
+    ),
+    NotificationItem(
+      id: 'NOTIF-08',
+      title: 'Gym Announcement: Holiday Schedule & Maintenance',
+      message: 'Spa & recovery suite ozone purification is scheduled Sunday 2 PM - 5 PM. Gym floor remains open 24/7.',
+      timestamp: DateTime.now().subtract(const Duration(days: 8)),
+      isRead: true,
+      type: 'announcement',
+      actionRoute: '/announcements',
+      actionLabel: 'Read Notice',
+    ),
+    NotificationItem(
+      id: 'NOTIF-09',
+      title: 'Membership Expiry & Renewal Reminder',
+      message: 'Your Annual All-Access Premium plan runs through Dec 30, 2026. Review renewal options anytime on Membership.',
+      timestamp: DateTime.now().subtract(const Duration(days: 9)),
+      isRead: true,
+      type: 'membership',
+      actionRoute: '/membership',
+      actionLabel: 'Review Renewal',
+    ),
   ];
 
   /// Announcements

@@ -3,6 +3,7 @@ import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_text_styles.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/utils/formatters.dart';
+import '../../../../core/utils/receipt_downloader.dart';
 import '../../../../data/models/member.dart';
 import '../../../../data/models/payment.dart';
 import '../../../../shared/widgets/primary_button.dart';
@@ -33,7 +34,12 @@ class ReceiptViewDialog extends StatelessWidget {
     );
   }
 
-  void _handleDownload(BuildContext context) {
+  Future<void> _handleDownload(BuildContext context) async {
+    await ReceiptDownloader.downloadReceiptPdf(
+      payment: payment,
+      member: member,
+    );
+    if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(

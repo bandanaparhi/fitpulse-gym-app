@@ -3,13 +3,12 @@ import 'package:material_ui/material_ui.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_text_styles.dart';
 import '../../../../app/theme/app_theme.dart';
+import '../../../../core/utils/app_responsive.dart';
 import '../../../../data/models/workout.dart';
 import '../../../../shared/widgets/empty_state.dart';
-import '../../../../shared/widgets/info_card.dart';
-import '../../../../shared/widgets/primary_button.dart';
-import '../../../../shared/widgets/secondary_button.dart';
 
-/// Card previewing today's scheduled workout regime.
+/// Card previewing today's scheduled workout regime matching both
+/// Mobile and Desktop design direction screenshots.
 class TodayWorkoutCard extends StatelessWidget {
   final Workout? workout;
   final bool isLoading;
@@ -22,21 +21,28 @@ class TodayWorkoutCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = AppResponsive.isMobile(context);
+
     if (isLoading) {
-      return const InfoCard(
-        title: "Today's Workout",
-        icon: Icons.fitness_center_rounded,
-        child: SizedBox(
-          height: 160,
-          child: Center(child: CircularProgressIndicator()),
+      return Container(
+        height: 180,
+        decoration: BoxDecoration(
+          color: AppColors.cardBackground,
+          borderRadius: isMobile ? AppRadius.roundedLg : AppRadius.roundedLg,
+          border: Border.all(color: AppColors.borderSubtle),
         ),
+        child: const Center(child: CircularProgressIndicator()),
       );
     }
 
     if (workout == null) {
-      return InfoCard(
-        title: "Today's Workout",
-        icon: Icons.fitness_center_rounded,
+      return Container(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        decoration: BoxDecoration(
+          color: AppColors.cardBackground,
+          borderRadius: isMobile ? AppRadius.roundedLg : AppRadius.roundedLg,
+          border: Border.all(color: AppColors.borderSubtle),
+        ),
         child: EmptyState(
           icon: Icons.bedtime_outlined,
           title: 'Rest Day',
@@ -49,104 +55,257 @@ class TodayWorkoutCard extends StatelessWidget {
 
     final item = workout!;
 
-    return InfoCard(
-      title: "Today's Workout",
-      subtitle: '${item.category} • ${item.durationMinutes} mins • ${item.level}',
-      icon: Icons.fitness_center_rounded,
-      trailing: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        decoration: BoxDecoration(
-          color: AppColors.limeAccent.withValues(alpha: 0.2),
-          borderRadius: AppRadius.roundedSm,
-        ),
-        child: Text(
-          'TODAY',
-          style: AppTextStyles.caption.copyWith(
-            color: AppColors.limeAccentDark,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(item.title, style: AppTextStyles.titleLarge),
-          if (item.notes != null) ...[
-            const SizedBox(height: AppSpacing.xxs),
-            Text(
-              item.notes!,
-              style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary),
+    if (isMobile) {
+      return _buildMobileCard(context, item);
+    }
+    return _buildDesktopCard(context, item);
+  }
+
+  Widget _buildMobileCard(BuildContext context, Workout item) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Section Header
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                "Today's workout",
+                style: AppTextStyles.h3.copyWith(fontSize: 18, fontWeight: FontWeight.w700),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            InkWell(
+              onTap: () => context.go('/workouts/${item.id}'),
+              child: Text(
+                'View plan',
+                style: AppTextStyles.button.copyWith(
+                  color: AppColors.limeAccentDark,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
           ],
-          const SizedBox(height: AppSpacing.md),
+        ),
+        const SizedBox(height: AppSpacing.sm),
 
-          // Exercise preview list
-          Container(
-            padding: const EdgeInsets.all(AppSpacing.md),
-            decoration: BoxDecoration(
-              color: AppColors.scaffoldBackground,
-              borderRadius: AppRadius.roundedMd,
-              border: Border.all(color: AppColors.borderSubtle),
-            ),
-            child: Column(
-              children: item.exercises.take(3).map((ex) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4.0),
-                  child: Row(
+        // Workout Card Container
+        Container(
+          decoration: BoxDecoration(
+            color: AppColors.cardBackground,
+            borderRadius: AppRadius.roundedXl,
+            border: Border.all(color: AppColors.borderSubtle),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.03),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Gym banner image / Graphic header
+              ClipRRect(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(AppRadius.xl)),
+                child: Container(
+                  height: 140,
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Color(0xFF0F172A),
+                        Color(0xFF1E293B),
+                        Color(0xFF111827),
+                      ],
+                    ),
+                  ),
+                  child: Stack(
                     children: [
-                      Container(
-                        width: 6,
-                        height: 6,
-                        decoration: const BoxDecoration(
-                          color: AppColors.darkCharcoal,
-                          shape: BoxShape.circle,
+                      // Atmospheric lighting glow
+                      Positioned(
+                        top: -30,
+                        right: -30,
+                        child: Container(
+                          width: 140,
+                          height: 140,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: AppColors.limeAccent.withValues(alpha: 0.18),
+                          ),
                         ),
                       ),
-                      const SizedBox(width: AppSpacing.sm),
-                      Expanded(
-                        child: Text(
-                          ex.name,
-                          style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w500),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      Text(
-                        '${ex.sets} × ${ex.reps} reps${ex.weightKg != null ? ' @ ${ex.weightKg!.toStringAsFixed(0)}kg' : ''}',
-                        style: AppTextStyles.caption.copyWith(
-                          color: AppColors.textSecondary,
-                          fontWeight: FontWeight.w600,
+                      // Athletic silhouette / Dumbbells illustration
+                      Center(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.fitness_center_rounded,
+                              size: 40,
+                              color: AppColors.limeAccent.withValues(alpha: 0.85),
+                            ),
+                            const SizedBox(width: AppSpacing.sm),
+                            Flexible(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'FITPULSE TRAINING',
+                                    style: AppTextStyles.caption.copyWith(
+                                      color: AppColors.limeAccent,
+                                      letterSpacing: 1.2,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 10,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  Text(
+                                    item.category.toUpperCase(),
+                                    style: AppTextStyles.titleMedium.copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w800,
+                                      letterSpacing: 0.5,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                );
-              }).toList(),
-            ),
-          ),
-          const SizedBox(height: AppSpacing.lg),
-
-          // Action buttons
-          Row(
-            children: [
-              Expanded(
-                child: PrimaryButton(
-                  label: 'Start Workout',
-                  icon: Icons.play_arrow_rounded,
-                  height: 42,
-                  onPressed: () => context.go('/workouts/${item.id}/start'),
                 ),
               ),
-              const SizedBox(width: AppSpacing.md),
-              Expanded(
-                child: SecondaryButton(
-                  label: 'View Details',
-                  icon: Icons.format_list_bulleted_rounded,
-                  height: 42,
-                  onPressed: () => context.go('/workouts/${item.id}'),
+
+              // Title & details
+              Padding(
+                padding: const EdgeInsets.all(AppSpacing.md),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.title,
+                      style: AppTextStyles.titleLarge.copyWith(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${item.level} · ${item.exercises.length} exercises · ${item.durationMinutes} min',
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        color: AppColors.textSecondary,
+                        fontSize: 13,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+
+                    // Primary Start Workout Button
+                    SizedBox(
+                      width: double.infinity,
+                      height: 48,
+                      child: ElevatedButton.icon(
+                        onPressed: () => context.go('/workouts/${item.id}/start'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.limeAccent,
+                          foregroundColor: AppColors.darkCharcoal,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(borderRadius: AppRadius.roundedMd),
+                          textStyle: AppTextStyles.button.copyWith(fontWeight: FontWeight.w700),
+                        ),
+                        icon: const Icon(Icons.play_circle_fill_rounded, size: 20),
+                        label: const Text('Start Workout'),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDesktopCard(BuildContext context, Workout item) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: AppColors.cardBackground,
+        borderRadius: AppRadius.roundedLg,
+        border: Border.all(color: AppColors.borderSubtle),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Section Header
+          Text(
+            "Today's Workout",
+            style: AppTextStyles.caption.copyWith(
+              color: AppColors.textMuted,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 1.1,
+              fontSize: 11,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.xs),
+
+          // Workout Title
+          Text(
+            item.title,
+            style: AppTextStyles.h3.copyWith(
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+              color: AppColors.textPrimary,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 4),
+
+          // Meta Information
+          Text(
+            '${item.exercises.length} exercises · ${item.durationMinutes} minutes · ${item.level}',
+            style: AppTextStyles.bodyMedium.copyWith(
+              color: AppColors.textSecondary,
+              fontSize: 13.5,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: AppSpacing.lg),
+
+          // Start Workout Button
+          ElevatedButton(
+            onPressed: () => context.go('/workouts/${item.id}/start'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.limeAccent,
+              foregroundColor: AppColors.darkCharcoal,
+              elevation: 0,
+              minimumSize: const Size(140, 44),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(borderRadius: AppRadius.roundedMd),
+              textStyle: AppTextStyles.button.copyWith(fontWeight: FontWeight.w700),
+            ),
+            child: const Text('Start Workout'),
           ),
         ],
       ),

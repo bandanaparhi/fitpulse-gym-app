@@ -228,5 +228,31 @@ void main() {
       // Upcoming booking is removed, empty state appears
       expect(find.text('No Upcoming Reservations'), findsOneWidget);
     });
+
+    testWidgets('ClassListingScreen switches between Cards and Group Class Timetable views', (tester) async {
+      await tester.binding.setSurfaceSize(const Size(1200, 1000));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(
+              body: ClassListingScreen(),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      expect(find.text('Cards'), findsOneWidget);
+      expect(find.text('Timetable'), findsOneWidget);
+
+      await tester.tap(find.text('Timetable'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('High-Octane Spin Revolution'), findsOneWidget);
+      expect(find.text('Book'), findsWidgets);
+    });
   });
 }

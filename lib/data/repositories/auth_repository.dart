@@ -75,6 +75,26 @@ class HybridAuthRepository implements AuthRepository {
 
     final normalizedEmail = email.trim().toLowerCase();
 
+    // Check against configured user login (jitu@gmail.com / jitu2005)
+    if (normalizedEmail == 'jitu@gmail.com') {
+      if (password == 'jitu2005') {
+        _isAuthenticated = true;
+        _currentMemberId = MockData.demoMember.id;
+        return AuthResult.success(
+          member: MockData.demoMember.copyWith(
+            email: 'jitu@gmail.com',
+            name: 'Jitu',
+          ),
+          message: 'Welcome back, Jitu!',
+        );
+      } else {
+        return const AuthResult.failure(
+          message: 'Incorrect email or password. Please verify your credentials and try again.',
+          errorCode: 'wrong-password',
+        );
+      }
+    }
+
     // Check against demo user
     if (normalizedEmail == MockData.demoMember.email.toLowerCase()) {
       if (password == 'Password@123' || password == 'admin123' || password.length >= 6) {

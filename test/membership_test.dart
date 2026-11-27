@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:app/features/membership/presentation/membership_screen.dart';
+import 'package:app/data/models/membership.dart';
 import 'package:app/data/repositories/mock_data.dart';
 import 'package:app/app/providers.dart';
 
@@ -104,6 +105,40 @@ void main() {
 
       expect(find.text('No Active Membership'), findsOneWidget);
       expect(find.text('Choose a Plan'), findsOneWidget);
+    });
+
+    testWidgets('Displays pending renewal request banner and payment history link', (tester) async {
+      final pendingRenewal = Membership(
+        id: 'MEM-REQ-1',
+        planName: 'Semi-Annual Elite',
+        status: 'Pending',
+        startDate: DateTime(2026, 11, 27),
+        expiryDate: DateTime(2027, 5, 27),
+        price: 8499,
+        durationMonths: '6 Months',
+        benefits: const ['Unlimited Gym Floor Access'],
+      );
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            membershipHistoryProvider.overrideWith((ref) async => [
+                  pendingRenewal,
+                ]),
+          ],
+          child: const MaterialApp(
+            home: Scaffold(
+              body: MembershipScreen(),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      expect(find.text('Payment History & Receipts'), findsOneWidget);
+      expect(find.text('Pending Renewal Request: Semi-Annual Elite'), findsOneWidget);
+      expect(find.text('Payments'), findsOneWidget);
     });
   });
 }

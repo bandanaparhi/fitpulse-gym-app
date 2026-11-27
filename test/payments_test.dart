@@ -4,6 +4,8 @@ import 'package:material_ui/material_ui.dart';
 import 'package:app/features/payments/presentation/payment_history_screen.dart';
 import 'package:app/features/payments/presentation/payment_details_screen.dart';
 import 'package:app/app/providers.dart';
+import 'package:app/core/utils/receipt_downloader.dart';
+import 'package:app/data/models/payment.dart';
 
 void main() {
   group('Payments Section Test Suite', () {
@@ -167,6 +169,51 @@ void main() {
 
       // Never shows Pay Now button when gateway is unconfigured
       expect(find.textContaining('Pay Now'), findsNothing);
+    });
+
+    testWidgets('Pending payment items show itemized invoice details and PDF generator outputs valid PDF', (tester) async {
+      await tester.binding.setSurfaceSize(const Size(1200, 1000));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      final pendingItem = Payment(
+        id: 'PAY-9991',
+        memberId: 'GM-1024',
+        amount: 8499,
+        date: DateTime(2026, 11, 25),
+        status: 'Pending',
+        paymentMethod: 'Front Desk / UPI',
+        invoiceNumber: 'INV-2026-0991',
+        description: 'Semi-Annual Elite Renewal Request',
+        serviceName: 'Semi-Annual Elite Membership',
+      );
+
+      final pdfText = String.fromCharCodes(
+        ReceiptDownloader.buildPdfBytes(payment: pendingItem),
+      );
+      expect(pdfText, startsWith('%PDF-1.4'));
+      expect(pdfText, contains('INV-2026-0991'));
+      expect(pdfText, contains('Semi-Annual Elite Membership'));
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            paymentHistoryProvider.overrideWith((ref) async => [pendingItem]),
+            pendingPaymentAmountProvider.overrideWith((ref) async => 8499.0),
+          ],
+          child: const MaterialApp(
+            home: Scaffold(
+              body: PaymentHistoryScreen(),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('Pending Payment Due: ₹8,499'), findsOneWidget);
+      expect(find.text('Semi-Annual Elite Membership'), findsOneWidget);
+      expect(find.textContaining('INV-2026-0991'), findsWidgets);
+      expect(find.text('View Details'), findsOneWidget);
     });
   });
 }

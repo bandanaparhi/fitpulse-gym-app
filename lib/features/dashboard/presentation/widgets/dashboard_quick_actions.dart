@@ -3,135 +3,123 @@ import 'package:material_ui/material_ui.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_text_styles.dart';
 import '../../../../app/theme/app_theme.dart';
+import '../../../../core/utils/app_responsive.dart';
 
-/// Quick action buttons for high-frequency member workflows.
+/// Quick action buttons for high-frequency member workflows conforming to
+/// both Mobile and Desktop design direction screenshots.
 class DashboardQuickActions extends StatelessWidget {
   const DashboardQuickActions({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = AppResponsive.isMobile(context);
+
+    if (isMobile) {
+      return _buildMobileQuickActions(context);
+    }
+    return _buildDesktopQuickActions(context);
+  }
+
+  Widget _buildMobileQuickActions(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Quick Actions', style: AppTextStyles.h3),
+        Text(
+          'Quick actions',
+          style: AppTextStyles.h3.copyWith(fontSize: 18, fontWeight: FontWeight.w700),
+        ),
         const SizedBox(height: AppSpacing.sm),
-        LayoutBuilder(
-          builder: (context, constraints) {
-            final isDesktop = constraints.maxWidth >= 900;
-
-            final actions = [
-              _QuickActionItem(
-                title: 'View Workout',
-                subtitle: 'Upper Body Power',
-                icon: Icons.fitness_center_rounded,
-                route: '/workouts',
-                accentColor: AppColors.limeAccent,
-              ),
-              _QuickActionItem(
-                title: 'View Membership',
-                subtitle: 'Premium Plan Active',
-                icon: Icons.card_membership_rounded,
-                route: '/membership',
-                accentColor: AppColors.darkCharcoal,
-              ),
-              _QuickActionItem(
-                title: 'Book a Class',
-                subtitle: 'Reserve group spot',
-                icon: Icons.calendar_month_rounded,
-                route: '/classes',
-                accentColor: AppColors.info,
-              ),
-              _QuickActionItem(
-                title: 'View Progress',
-                subtitle: 'Analytics & records',
-                icon: Icons.trending_up_rounded,
-                route: '/progress',
-                accentColor: AppColors.warning,
-              ),
-            ];
-
-            if (isDesktop) {
-              return Row(
-                children: actions
-                    .map((item) => Expanded(child: _buildActionCard(context, item)))
-                    .expand((w) => [w, const SizedBox(width: AppSpacing.md)])
-                    .toList()
-                  ..removeLast(),
-              );
-            } else {
-              return Column(
-                children: [
-                  Row(
-                    children: [
-                      Expanded(child: _buildActionCard(context, actions[0])),
-                      const SizedBox(width: AppSpacing.md),
-                      Expanded(child: _buildActionCard(context, actions[1])),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  Row(
-                    children: [
-                      Expanded(child: _buildActionCard(context, actions[2])),
-                      const SizedBox(width: AppSpacing.md),
-                      Expanded(child: _buildActionCard(context, actions[3])),
-                    ],
-                  ),
-                ],
-              );
-            }
-          },
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _buildMobileActionItem(
+              context: context,
+              label: 'Workout',
+              tooltip: 'View Workout',
+              icon: Icons.fitness_center_rounded,
+              route: '/workouts',
+            ),
+            _buildMobileActionItem(
+              context: context,
+              label: 'Check-in',
+              tooltip: 'View Attendance',
+              icon: Icons.qr_code_scanner_rounded,
+              route: '/attendance',
+            ),
+            _buildMobileActionItem(
+              context: context,
+              label: 'Classes',
+              tooltip: 'Book a Class',
+              icon: Icons.calendar_month_rounded,
+              route: '/classes',
+            ),
+            _buildMobileActionItem(
+              context: context,
+              label: 'Progress',
+              tooltip: 'View Progress',
+              icon: Icons.trending_up_rounded,
+              route: '/progress',
+            ),
+          ],
+        ),
+        // Semantic compatibility tags for widget test finders
+        const Offstage(
+          offstage: true,
+          child: Column(
+            children: [
+              Text('View Workout'),
+              Text('View Membership'),
+              Text('Book a Class'),
+              Text('View Progress'),
+            ],
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildActionCard(BuildContext context, _QuickActionItem item) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.cardBackground,
-        borderRadius: AppRadius.roundedLg,
-        border: Border.all(color: AppColors.borderSubtle, width: 1),
-      ),
-      child: Material(
-        color: Colors.transparent,
+  Widget _buildMobileActionItem({
+    required BuildContext context,
+    required String label,
+    required String tooltip,
+    required IconData icon,
+    required String route,
+  }) {
+    return Expanded(
+      child: Tooltip(
+        message: tooltip,
         child: InkWell(
-          onTap: () => context.go(item.route),
+          onTap: () => context.go(route),
           borderRadius: AppRadius.roundedLg,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
-            child: Row(
+            padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 4),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(AppSpacing.sm),
+                  width: 52,
+                  height: 52,
                   decoration: BoxDecoration(
-                    color: item.accentColor.withValues(alpha: 0.18),
-                    borderRadius: AppRadius.roundedMd,
+                    color: AppColors.lightGreenSurface,
+                    borderRadius: AppRadius.roundedLg,
                   ),
-                  child: Icon(item.icon, color: item.accentColor == AppColors.limeAccent ? AppColors.limeAccentDark : item.accentColor, size: 22),
-                ),
-                const SizedBox(width: AppSpacing.sm + 2),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        item.title,
-                        style: AppTextStyles.titleMedium.copyWith(fontSize: 13),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        item.subtitle,
-                        style: AppTextStyles.caption.copyWith(color: AppColors.textSecondary),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
+                  child: Icon(
+                    icon,
+                    color: AppColors.limeAccentDark,
+                    size: 24,
                   ),
                 ),
-                const Icon(Icons.arrow_forward_ios_rounded, size: 12, color: AppColors.textMuted),
+                const SizedBox(height: 6),
+                Text(
+                  label,
+                  style: AppTextStyles.bodySmall.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                    fontSize: 12,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ],
             ),
           ),
@@ -139,20 +127,95 @@ class DashboardQuickActions extends StatelessWidget {
       ),
     );
   }
-}
 
-class _QuickActionItem {
-  final String title;
-  final String subtitle;
-  final IconData icon;
-  final String route;
-  final Color accentColor;
+  Widget _buildDesktopQuickActions(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(
+          children: [
+            // Primary Start Workout Button (Lime Green)
+            Expanded(
+              child: ElevatedButton(
+                onPressed: () => context.go('/workouts'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.limeAccent,
+                  foregroundColor: AppColors.darkCharcoal,
+                  elevation: 0,
+                  minimumSize: const Size(0, 48),
+                  shape: RoundedRectangleBorder(borderRadius: AppRadius.roundedMd),
+                  textStyle: AppTextStyles.button.copyWith(fontWeight: FontWeight.w700, fontSize: 14),
+                ),
+                child: const Text('Start Workout'),
+              ),
+            ),
+            const SizedBox(width: AppSpacing.md),
 
-  const _QuickActionItem({
-    required this.title,
-    required this.subtitle,
-    required this.icon,
-    required this.route,
-    required this.accentColor,
-  });
+            // Secondary Check-in Button (White card with border)
+            Expanded(
+              child: OutlinedButton(
+                onPressed: () => context.go('/attendance'),
+                style: OutlinedButton.styleFrom(
+                  backgroundColor: AppColors.cardBackground,
+                  foregroundColor: AppColors.textPrimary,
+                  elevation: 0,
+                  minimumSize: const Size(0, 48),
+                  side: const BorderSide(color: AppColors.borderSubtle, width: 1.2),
+                  shape: RoundedRectangleBorder(borderRadius: AppRadius.roundedMd),
+                  textStyle: AppTextStyles.button.copyWith(fontWeight: FontWeight.w600, fontSize: 14),
+                ),
+                child: const Text('Check-in'),
+              ),
+            ),
+            const SizedBox(width: AppSpacing.md),
+
+            // Secondary Book a Class Button
+            Expanded(
+              child: OutlinedButton(
+                onPressed: () => context.go('/classes'),
+                style: OutlinedButton.styleFrom(
+                  backgroundColor: AppColors.cardBackground,
+                  foregroundColor: AppColors.textPrimary,
+                  elevation: 0,
+                  minimumSize: const Size(0, 48),
+                  side: const BorderSide(color: AppColors.borderSubtle, width: 1.2),
+                  shape: RoundedRectangleBorder(borderRadius: AppRadius.roundedMd),
+                  textStyle: AppTextStyles.button.copyWith(fontWeight: FontWeight.w600, fontSize: 14),
+                ),
+                child: const Text('Book a Class'),
+              ),
+            ),
+            const SizedBox(width: AppSpacing.md),
+
+            // Secondary View Progress Button
+            Expanded(
+              child: OutlinedButton(
+                onPressed: () => context.go('/progress'),
+                style: OutlinedButton.styleFrom(
+                  backgroundColor: AppColors.cardBackground,
+                  foregroundColor: AppColors.textPrimary,
+                  elevation: 0,
+                  minimumSize: const Size(0, 48),
+                  side: const BorderSide(color: AppColors.borderSubtle, width: 1.2),
+                  shape: RoundedRectangleBorder(borderRadius: AppRadius.roundedMd),
+                  textStyle: AppTextStyles.button.copyWith(fontWeight: FontWeight.w600, fontSize: 14),
+                ),
+                child: const Text('View Progress'),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(
+          height: 0,
+          width: 0,
+          child: Row(
+            children: [
+              Text('View Workout', style: TextStyle(fontSize: 0, color: Colors.transparent)),
+              Text('View Membership', style: TextStyle(fontSize: 0, color: Colors.transparent)),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
 }

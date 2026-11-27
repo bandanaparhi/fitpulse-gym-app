@@ -4,6 +4,7 @@ import '../../../../app/providers.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_text_styles.dart';
 import '../../../../app/theme/app_theme.dart';
+import '../../../../core/utils/app_responsive.dart';
 import '../../../../shared/widgets/primary_button.dart';
 
 /// Card providing self-service password update functionality:
@@ -163,7 +164,7 @@ class _ChangePasswordCardState extends ConsumerState<ChangePasswordCard> {
         borderRadius: BorderRadius.circular(AppRadius.lg),
         border: Border.all(color: AppColors.borderSubtle),
       ),
-      padding: const EdgeInsets.all(AppSpacing.xl),
+      padding: AppResponsive.cardPaddingLg(context),
       child: Form(
         key: _formKey,
         child: Column(

@@ -167,5 +167,44 @@ void main() {
       // Should be back to current month with records
       expect(find.text('18'), findsWidgets);
     });
+
+    testWidgets('QR Check-In and QR Check-Out record session times and display workout streak and monthly report', (tester) async {
+      await tester.binding.setSurfaceSize(const Size(1200, 1000));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(
+              body: AttendanceScreen(),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // Workout streak & Monthly attendance report
+      expect(find.textContaining('Workout Streak:'), findsOneWidget);
+      expect(find.textContaining('Monthly Attendance Report'), findsOneWidget);
+
+      // Tap QR Check-In
+      final checkInBtn = find.text('QR Check-In');
+      expect(checkInBtn, findsOneWidget);
+      await tester.tap(checkInBtn);
+      await tester.pumpAndSettle();
+
+      // Active session now shows QR Check-Out
+      expect(find.text('Active Gym Session • Checked In'), findsOneWidget);
+      final checkOutBtn = find.text('QR Check-Out');
+      expect(checkOutBtn, findsOneWidget);
+
+      // Tap QR Check-Out
+      await tester.tap(checkOutBtn);
+      await tester.pumpAndSettle();
+
+      // Session completed -> returns to QR Check-In ready state
+      expect(find.text('QR Check-In'), findsOneWidget);
+    });
   });
 }

@@ -5,7 +5,10 @@ import '../../../app/providers.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_text_styles.dart';
 import '../../../app/theme/app_theme.dart';
+import '../../../core/utils/app_responsive.dart';
 import '../../../core/utils/formatters.dart';
+import '../../../core/utils/receipt_downloader.dart';
+import '../../../data/models/member.dart';
 import '../../../data/models/payment.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_state.dart';
@@ -24,7 +27,16 @@ class PaymentDetailsScreen extends ConsumerWidget {
     required this.paymentId,
   });
 
-  void _handleDownloadReceipt(BuildContext context, Payment payment) {
+  Future<void> _handleDownloadReceipt(
+    BuildContext context,
+    Payment payment,
+    Member? member,
+  ) async {
+    await ReceiptDownloader.downloadReceiptPdf(
+      payment: payment,
+      member: member,
+    );
+    if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
@@ -112,7 +124,7 @@ class PaymentDetailsScreen extends ConsumerWidget {
           final member = memberAsync.value;
 
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(AppSpacing.lg),
+            padding: AppResponsive.pagePadding(context),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -420,8 +432,11 @@ class PaymentDetailsScreen extends ConsumerWidget {
                             child: SecondaryButton(
                               label: 'Download Receipt (PDF)',
                               icon: Icons.download_rounded,
-                              onPressed: () =>
-                                  _handleDownloadReceipt(context, payment),
+                              onPressed: () => _handleDownloadReceipt(
+                                context,
+                                payment,
+                                member,
+                              ),
                             ),
                           ),
 

@@ -1,6 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 import '../../../app/theme/app_colors.dart';
-import '../../../app/theme/app_theme.dart';
+import '../../../core/utils/app_responsive.dart';
 import '../../../shared/widgets/page_header.dart';
 import 'widgets/change_password_card.dart';
 import 'widgets/logout_card.dart';
@@ -17,10 +17,11 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final gap = AppResponsive.sectionGapLg(context);
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppSpacing.lg),
+        padding: AppResponsive.pagePadding(context),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -31,27 +32,25 @@ class SettingsScreen extends StatelessWidget {
                   'Manage your notification alerts, security credentials, data privacy, and active session.',
             ),
 
-            const SizedBox(height: AppSpacing.lg),
-
             // Notification Preferences
             const NotificationPreferencesCard(),
 
-            const SizedBox(height: AppSpacing.xl),
+            SizedBox(height: gap),
 
             // Change Password
             const ChangePasswordCard(),
 
-            const SizedBox(height: AppSpacing.xl),
+            SizedBox(height: gap),
 
             // Privacy Information
             const PrivacyInformationCard(),
 
-            const SizedBox(height: AppSpacing.xl),
+            SizedBox(height: gap),
 
             // Logout
             const LogoutCard(),
 
-            const SizedBox(height: AppSpacing.xxl),
+            SizedBox(height: gap),
           ],
         ),
       ),

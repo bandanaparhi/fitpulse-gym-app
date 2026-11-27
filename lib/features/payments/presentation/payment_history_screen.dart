@@ -4,6 +4,7 @@ import '../../../app/providers.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_text_styles.dart';
 import '../../../app/theme/app_theme.dart';
+import '../../../core/utils/app_responsive.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_state.dart';
@@ -94,8 +95,9 @@ class PaymentHistoryScreen extends ConsumerWidget {
               .where((p) => p.isPaid)
               .fold<double>(0.0, (sum, p) => sum + p.amount);
 
+          final gap = AppResponsive.sectionGap(context);
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(AppSpacing.lg),
+            padding: AppResponsive.pagePadding(context),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -106,15 +108,14 @@ class PaymentHistoryScreen extends ConsumerWidget {
                       'View official invoices, payment receipts, and transaction records for your gym membership and services.',
                 ),
 
-                const SizedBox(height: AppSpacing.lg),
-
-                // Pending Payment Banner / Online Availability Check
+                // Pending Payment Banner / Online Availability Check & Itemized Details
                 PendingPaymentCard(
                   pendingAmount: pendingAmount,
+                  pendingPayments: payments.where((p) => p.isPending).toList(),
                   isOnlinePaymentConfigured: isOnlinePaymentConfigured,
                 ),
 
-                const SizedBox(height: AppSpacing.lg),
+                SizedBox(height: gap),
 
                 // Summary KPIs
                 LayoutBuilder(

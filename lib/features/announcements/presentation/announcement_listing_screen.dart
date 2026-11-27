@@ -4,6 +4,7 @@ import '../../../app/providers.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_text_styles.dart';
 import '../../../app/theme/app_theme.dart';
+import '../../../core/utils/app_responsive.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/page_header.dart';
 import 'widgets/announcement_card.dart';
@@ -40,7 +41,7 @@ class _AnnouncementListingScreenState
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppSpacing.lg),
+        padding: AppResponsive.pagePadding(context),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -50,8 +51,6 @@ class _AnnouncementListingScreenState
               subtitle:
                   'Official facility updates, equipment enhancements, operational schedules, and club events.',
             ),
-
-            const SizedBox(height: AppSpacing.lg),
 
             // Category Filter Chips
             if (announcements.isNotEmpty) ...[

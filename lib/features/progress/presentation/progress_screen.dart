@@ -4,13 +4,21 @@ import '../../../app/providers.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_text_styles.dart';
 import '../../../app/theme/app_theme.dart';
+import '../../../core/utils/app_responsive.dart';
+import '../../../data/models/daily_health_log.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/loading_indicator.dart';
 import '../../../shared/widgets/page_header.dart';
+import 'widgets/before_after_photos_card.dart';
+import 'widgets/bmi_bmr_calculator_card.dart';
 import 'widgets/body_measurements_card.dart';
+import 'widgets/daily_health_trackers_card.dart';
 import 'widgets/fitness_chart_card.dart';
 import 'widgets/fitness_goals_card.dart';
+import 'widgets/muscle_growth_card.dart';
+import 'widgets/personal_records_summary_card.dart';
 import 'widgets/progress_summary_cards.dart';
+import 'widgets/weekly_monthly_reports_card.dart';
 
 /// Fitness Progress & Analytics screen at `/progress`.
 ///
@@ -32,6 +40,9 @@ class ProgressScreen extends ConsumerWidget {
     final goalsAsync = ref.watch(fitnessGoalsProvider);
     final completedWorkoutsAsync = ref.watch(completedWorkoutsProvider);
     final attendanceAsync = ref.watch(attendanceHistoryProvider);
+    final fitnessProfileAsync = ref.watch(fitnessProfileProvider);
+    final dailyHealthAsync = ref.watch(dailyHealthLogProvider);
+    final foodLogsAsync = ref.watch(foodLogsProvider);
     final isMetric = ref.watch(isMetricUnitProvider);
 
     return memberAsync.when(
@@ -70,6 +81,14 @@ class ProgressScreen extends ConsumerWidget {
             final goals = goalsAsync.value ?? [];
             final completedWorkouts = completedWorkoutsAsync.value ?? [];
             final attendanceRecords = attendanceAsync.value ?? [];
+            final fitnessProfile = fitnessProfileAsync.value;
+            final dailyHealth =
+                dailyHealthAsync.value ?? const DailyHealthLog(dateKey: '');
+            final foodLogs = foodLogsAsync.value ?? [];
+            final latestWeight = measurements.isNotEmpty
+                ? measurements.last.weightKg
+                : (fitnessProfile?.weightKg ?? 75.0);
+            final gapLg = AppResponsive.sectionGapLg(context);
 
             // Calculate attendance visits this month
             final now = DateTime.now();
@@ -79,7 +98,7 @@ class ProgressScreen extends ConsumerWidget {
                 .length;
 
             return SingleChildScrollView(
-              padding: const EdgeInsets.all(AppSpacing.lg),
+              padding: AppResponsive.pagePadding(context),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -89,8 +108,6 @@ class ProgressScreen extends ConsumerWidget {
                     subtitle:
                         'Monitor body weight trends, circumferences, personal fitness goals, and training consistency.',
                   ),
-
-                  const SizedBox(height: AppSpacing.lg),
 
                   // 1. Progress KPI Summary Cards
                   ProgressSummaryCards(
@@ -102,7 +119,21 @@ class ProgressScreen extends ConsumerWidget {
                     isMetric: isMetric,
                   ),
 
-                  const SizedBox(height: AppSpacing.xl),
+                  SizedBox(height: gapLg),
+
+                  // 1b. Daily Activity, Water & Sleep Trackers
+                  const DailyHealthTrackersCard(),
+
+                  SizedBox(height: gapLg),
+
+                  // 1c. Interactive BMI & BMR Calculator
+                  BmiBmrCalculatorCard(
+                    initialHeightCm: fitnessProfile?.heightCm ?? 175.0,
+                    initialWeightKg: latestWeight,
+                    initialAge: fitnessProfile?.age ?? 28,
+                  ),
+
+                  SizedBox(height: gapLg),
 
                   // 2. Interactive Fitness Progress Charts (fl_chart)
                   FitnessChartCard(
@@ -110,12 +141,54 @@ class ProgressScreen extends ConsumerWidget {
                     isMetric: isMetric,
                   ),
 
+                  SizedBox(height: gapLg),
+
+                  // 2b. Dedicated Muscle Growth & Recomposition Tracking
+                  MuscleGrowthCard(
+                    measurements: measurements,
+                    isMetric: isMetric,
+                    onSaveMeasurement: (updated) {
+                      ref
+                          .read(fitnessMeasurementsProvider.notifier)
+                          .saveMeasurement(updated);
+                    },
+                  ),
+
+                  SizedBox(height: gapLg),
+
+                  // 2c. Before & After Progress Photos
+                  BeforeAfterPhotosCard(
+                    latestWeightKg: latestWeight,
+                    isMetric: isMetric,
+                  ),
+
+                  SizedBox(height: gapLg),
+
+                  // 2d. Personal Fitness Records (PRs)
+                  PersonalRecordsSummaryCard(
+                    memberId: member.id,
+                    isMetric: isMetric,
+                  ),
+
+                  SizedBox(height: gapLg),
+
+                  // 2e. Weekly & Monthly Progress Reports
+                  WeeklyMonthlyReportsCard(
+                    measurements: measurements,
+                    completedWorkouts: completedWorkouts,
+                    attendanceRecords: attendanceRecords,
+                    dailyHealthLog: dailyHealth,
+                    foodLogs: foodLogs,
+                    isMetric: isMetric,
+                  ),
+
                   const SizedBox(height: AppSpacing.xl),
 
-                  // 3. Personal Fitness Goals
+                  // 3. Personal Fitness Goals & Goal Compilation
                   FitnessGoalsCard(
                     goals: goals,
                     isMetric: isMetric,
+                    primaryProfileGoal: fitnessProfile?.primaryGoal,
                     onSaveGoal: (newGoal) {
                       ref.read(fitnessGoalsProvider.notifier).saveGoal(newGoal);
                     },

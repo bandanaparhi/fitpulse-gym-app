@@ -37,6 +37,8 @@ class NotificationItem {
         return '/trainer';
       case 'diet':
         return '/diet-plan';
+      case 'water':
+        return '/progress';
       case 'progress':
         return '/progress';
       case 'announcement':
@@ -63,6 +65,8 @@ class NotificationItem {
         return 'View Coach';
       case 'diet':
         return 'View Diet Plan';
+      case 'water':
+        return 'Log Water Intake';
       case 'progress':
         return 'View Progress';
       case 'announcement':

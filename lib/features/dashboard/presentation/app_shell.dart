@@ -32,6 +32,7 @@ class _AppShellState extends ConsumerState<AppShell> {
   Widget build(BuildContext context) {
     final currentRoute = widget.routerState.uri.path;
     final unreadCount = ref.watch(unreadNotificationCountProvider);
+    ref.watch(realtimeMemberSyncProvider);
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -58,11 +59,13 @@ class _AppShellState extends ConsumerState<AppShell> {
                         unreadNotifications: unreadCount,
                       ),
                       Expanded(
-                        child: Align(
-                          alignment: Alignment.topCenter,
-                          child: ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 1400),
-                            child: widget.child,
+                        child: ClipRect(
+                          child: Align(
+                            alignment: Alignment.topCenter,
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 1400),
+                              child: widget.child,
+                            ),
                           ),
                         ),
                       ),
@@ -74,23 +77,53 @@ class _AppShellState extends ConsumerState<AppShell> {
           );
         }
 
-        // Mobile Layout: Compact Header + Content + Bottom Nav + End Drawer for More items
-        return Scaffold(
-          key: _scaffoldKey,
-          backgroundColor: AppColors.scaffoldBackground,
-          appBar: AppHeader(
-            isMobile: true,
-            unreadNotifications: unreadCount,
-            onMenuPressed: () => _scaffoldKey.currentState?.openDrawer(),
+        // Mobile Layout: Compact Header + Content + Bottom Nav + Drawer for More items
+        final baseTheme = Theme.of(context);
+        final mobileTheme = baseTheme.copyWith(
+          visualDensity: VisualDensity.compact,
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.limeAccent,
+              foregroundColor: AppColors.darkCharcoal,
+              elevation: 0,
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              shape: RoundedRectangleBorder(borderRadius: AppRadius.roundedMd),
+              textStyle: AppTextStyles.button.copyWith(fontSize: 13),
+            ),
           ),
-          drawer: _buildMobileDrawer(context, currentRoute),
-          body: SafeArea(
-            bottom: false,
-            child: widget.child,
+          outlinedButtonTheme: OutlinedButtonThemeData(
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AppColors.textPrimary,
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              side: const BorderSide(color: AppColors.borderSubtle, width: 1.2),
+              shape: RoundedRectangleBorder(borderRadius: AppRadius.roundedMd),
+              textStyle: AppTextStyles.button.copyWith(fontSize: 13),
+            ),
           ),
-          bottomNavigationBar: AppBottomNav(
-            currentRoute: currentRoute,
-            onOpenMenu: () => _scaffoldKey.currentState?.openDrawer(),
+          inputDecorationTheme: baseTheme.inputDecorationTheme.copyWith(
+            isDense: true,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          ),
+        );
+
+        return Theme(
+          data: mobileTheme,
+          child: Scaffold(
+            key: _scaffoldKey,
+            backgroundColor: AppColors.scaffoldBackground,
+            appBar: AppHeader(
+              isMobile: true,
+              unreadNotifications: unreadCount,
+              onMenuPressed: () => _scaffoldKey.currentState?.openDrawer(),
+            ),
+            drawer: _buildMobileDrawer(context, currentRoute),
+            body: SafeArea(
+              bottom: false,
+              child: ClipRect(child: widget.child),
+            ),
+            bottomNavigationBar: AppBottomNav(
+              currentRoute: currentRoute,
+            ),
           ),
         );
       },
@@ -119,18 +152,24 @@ class _AppShellState extends ConsumerState<AppShell> {
                     child: const Icon(Icons.bolt, color: AppColors.darkCharcoal, size: 22),
                   ),
                   const SizedBox(width: AppSpacing.sm),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        AppConstants.appName,
-                        style: AppTextStyles.titleMedium.copyWith(color: AppColors.textOnDark),
-                      ),
-                      Text(
-                        'Member: ${AppConstants.demoMemberName}',
-                        style: AppTextStyles.caption.copyWith(color: AppColors.limeAccent),
-                      ),
-                    ],
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          AppConstants.appName,
+                          style: AppTextStyles.titleMedium.copyWith(color: AppColors.textOnDark),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Text(
+                          'Member: ${AppConstants.demoMemberName}',
+                          style: AppTextStyles.caption.copyWith(color: AppColors.limeAccent),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -153,9 +192,12 @@ class _AppShellState extends ConsumerState<AppShell> {
             ListTile(
               leading: const Icon(Icons.logout_rounded, color: AppColors.error),
               title: Text('Sign Out', style: AppTextStyles.bodyMedium.copyWith(color: AppColors.error)),
-              onTap: () {
+              onTap: () async {
                 Navigator.of(context).pop();
-                context.go('/login');
+                await ref.read(authStateProvider.notifier).signOut();
+                if (context.mounted) {
+                  context.go('/login');
+                }
               },
             ),
           ],

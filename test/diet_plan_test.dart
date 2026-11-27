@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:app/features/diet/presentation/diet_plan_screen.dart';
 import 'package:app/app/providers.dart';
 import 'package:app/data/models/diet_plan.dart';
@@ -130,6 +131,45 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('Contact Trainer'), findsOneWidget);
+    });
+
+    testWidgets('Daily calorie/macro tracker, food logging, and meal reminders work on DietPlanScreen', (tester) async {
+      SharedPreferences.setMockInitialValues({});
+      await tester.binding.setSurfaceSize(const Size(1200, 1000));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(
+              body: DietPlanScreen(),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // Daily Calorie & Macro Tracker
+      expect(find.text('Daily Calorie & Macro Tracker'), findsOneWidget);
+      expect(find.text('Daily Calorie Intake'), findsOneWidget);
+      expect(find.text('0 / 2650 kcal'), findsOneWidget);
+      expect(find.text('Log Food'), findsOneWidget);
+
+      // Meal Reminders
+      expect(find.text('Meal Reminders'), findsOneWidget);
+      expect(find.textContaining('Breakfast:'), findsOneWidget);
+      expect(find.textContaining('Lunch:'), findsOneWidget);
+      expect(find.textContaining('Dinner:'), findsOneWidget);
+
+      // Quick-log first meal (Breakfast)
+      final logMealBtn = find.text('Log Meal').first;
+      await tester.ensureVisible(logMealBtn);
+      await tester.tap(logMealBtn);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Today\'s Food Log (1)'), findsOneWidget);
+      expect(find.text('0 / 2650 kcal'), findsNothing);
     });
   });
 }

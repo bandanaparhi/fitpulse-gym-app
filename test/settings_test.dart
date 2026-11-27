@@ -40,6 +40,8 @@ void main() {
       expect(find.text('Membership Reminders'), findsOneWidget);
       expect(find.text('Payment Reminders'), findsOneWidget);
       expect(find.text('Workout Reminders'), findsOneWidget);
+      expect(find.text('Water Intake Reminders'), findsOneWidget);
+      expect(find.text('Diet & Meal Reminders'), findsOneWidget);
       expect(find.text('Class Reminders'), findsOneWidget);
       expect(find.text('Gym Announcements'), findsOneWidget);
       expect(find.text('Save Preferences'), findsOneWidget);
@@ -86,12 +88,15 @@ void main() {
       await tester.pump();
       await tester.pumpAndSettle();
 
-      // Verify all 5 switches are present
+      // Verify all 7 switches are present
       final switches = find.byType(Switch);
-      expect(switches, findsNWidgets(5));
+      expect(switches, findsNWidgets(7));
 
-      // Toggle first switch (Membership Reminders)
+      // Toggle first switch (Membership Reminders) and fourth switch (Water Intake Reminders)
       await tester.tap(switches.first);
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(switches.at(3));
+      await tester.tap(switches.at(3));
       await tester.pumpAndSettle();
 
       // Tap "Save Preferences"
@@ -105,6 +110,8 @@ void main() {
       // Verify repository updated
       expect(testSettingsRepo.preferences.membershipReminders, isFalse);
       expect(testSettingsRepo.preferences.paymentReminders, isTrue);
+      expect(testSettingsRepo.preferences.waterIntakeReminders, isFalse);
+      expect(testSettingsRepo.preferences.dietReminders, isTrue);
     });
 
     testWidgets('ChangePasswordCard validates empty, short, and mismatching passwords', (tester) async {

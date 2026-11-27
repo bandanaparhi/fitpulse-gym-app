@@ -5,6 +5,7 @@ import '../../../../app/providers.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_text_styles.dart';
 import '../../../../app/theme/app_theme.dart';
+import '../../../../core/utils/app_responsive.dart';
 import '../../../../shared/widgets/confirmation_dialog.dart';
 
 /// Card providing session logout controls with confirmation protection.
@@ -50,7 +51,7 @@ class LogoutCard extends ConsumerWidget {
         borderRadius: BorderRadius.circular(AppRadius.lg),
         border: Border.all(color: AppColors.error.withValues(alpha: 0.3)),
       ),
-      padding: const EdgeInsets.all(AppSpacing.xl),
+      padding: AppResponsive.cardPaddingLg(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

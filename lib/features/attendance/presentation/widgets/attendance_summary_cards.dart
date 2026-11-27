@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_text_styles.dart';
 import '../../../../app/theme/app_theme.dart';
+import '../../../../core/utils/app_responsive.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../data/models/attendance_record.dart';
 import '../../../../shared/widgets/summary_card.dart';
@@ -17,8 +18,44 @@ class AttendanceSummaryCards extends StatelessWidget {
     required this.selectedMonth,
   });
 
+  ({int current, int best}) _computeStreaks(List<AttendanceRecord> records) {
+    if (records.isEmpty) return (current: 0, best: 0);
+    final uniqueDays = records
+        .map((r) => DateTime(r.checkIn.year, r.checkIn.month, r.checkIn.day))
+        .toSet()
+        .toList()
+      ..sort();
+
+    int best = 1;
+    int run = 1;
+    for (int i = 1; i < uniqueDays.length; i++) {
+      if (uniqueDays[i].difference(uniqueDays[i - 1]).inDays == 1) {
+        run++;
+        if (run > best) best = run;
+      } else {
+        run = 1;
+      }
+    }
+
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final daySet = uniqueDays.toSet();
+    DateTime cursor = daySet.contains(today)
+        ? today
+        : today.subtract(const Duration(days: 1));
+    int current = 0;
+    while (daySet.contains(cursor)) {
+      current++;
+      cursor = cursor.subtract(const Duration(days: 1));
+    }
+    return (current: current, best: best);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isMobile = AppResponsive.isMobile(context);
+    final streaks = _computeStreaks(records);
+
     // 1. Calculate visits this selected month directly from records
     final monthRecords = records.where((r) {
       return r.checkIn.year == selectedMonth.year &&
@@ -32,11 +69,18 @@ class AttendanceSummaryCards extends StatelessWidget {
     }).toList();
     final visitsThisYear = yearRecords.length;
 
-    // 3. Calculate average duration directly from records with checkOut
+    // 3. Calculate total & average duration directly from records with checkOut
     final monthDurations = monthRecords
         .where((r) => r.duration != null)
         .map((r) => r.duration!)
         .toList();
+    final totalMonthMinutes = monthDurations.fold<int>(
+      0,
+      (sum, d) => sum + d.inMinutes,
+    );
+    final totalMonthTimeStr = totalMonthMinutes >= 60
+        ? '${totalMonthMinutes ~/ 60}h ${totalMonthMinutes % 60}m'
+        : '${totalMonthMinutes}m';
 
     String avgDurationStr = '--';
     if (monthDurations.isNotEmpty) {
@@ -136,65 +180,133 @@ class AttendanceSummaryCards extends StatelessWidget {
         final cardConsistency = SummaryCard(
           label: 'Attendance Consistency',
           value: visitsThisMonth >= 12 ? 'Excellent' : 'Moderate',
-          subtitle: 'Regular weekly routine',
+          subtitle: '${streaks.current}d workout streak • Best: ${streaks.best}d',
           icon: Icons.local_fire_department_rounded,
           iconColor: AppColors.limeAccentDark,
           iconBgColor: AppColors.limeAccent.withValues(alpha: 0.15),
         );
 
-        if (isDesktop) {
-          return Row(
-            children: [
-              Expanded(child: cardMonth),
-              const SizedBox(width: AppSpacing.md),
-              Expanded(child: cardYear),
-              const SizedBox(width: AppSpacing.md),
-              Expanded(child: cardDuration),
-              const SizedBox(width: AppSpacing.md),
-              Expanded(child: cardConsistency),
-            ],
-          );
-        } else if (isTablet) {
-          return Column(
-            children: [
-              Row(
+        final kpiGrid = isDesktop
+            ? Row(
                 children: [
                   Expanded(child: cardMonth),
                   const SizedBox(width: AppSpacing.md),
                   Expanded(child: cardYear),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.md),
-              Row(
-                children: [
+                  const SizedBox(width: AppSpacing.md),
                   Expanded(child: cardDuration),
                   const SizedBox(width: AppSpacing.md),
                   Expanded(child: cardConsistency),
                 ],
+              )
+            : isTablet
+                ? Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(child: cardMonth),
+                          const SizedBox(width: AppSpacing.md),
+                          Expanded(child: cardYear),
+                        ],
+                      ),
+                      const SizedBox(height: AppSpacing.md),
+                      Row(
+                        children: [
+                          Expanded(child: cardDuration),
+                          const SizedBox(width: AppSpacing.md),
+                          Expanded(child: cardConsistency),
+                        ],
+                      ),
+                    ],
+                  )
+                : Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(child: cardMonth),
+                          const SizedBox(width: AppSpacing.sm),
+                          Expanded(child: cardYear),
+                        ],
+                      ),
+                      const SizedBox(height: AppSpacing.sm),
+                      Row(
+                        children: [
+                          Expanded(child: cardDuration),
+                          const SizedBox(width: AppSpacing.sm),
+                          Expanded(child: cardConsistency),
+                        ],
+                      ),
+                    ],
+                  );
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            kpiGrid,
+            SizedBox(height: isMobile ? AppSpacing.sm : AppSpacing.md),
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(
+                horizontal: isMobile ? 12 : AppSpacing.md,
+                vertical: isMobile ? 10 : 12,
               ),
-            ],
-          );
-        } else {
-          return Column(
-            children: [
-              Row(
+              decoration: BoxDecoration(
+                color: AppColors.cardBackground,
+                borderRadius: AppRadius.roundedMd,
+                border: Border.all(color: AppColors.borderSubtle),
+              ),
+              child: Wrap(
+                spacing: AppSpacing.lg,
+                runSpacing: AppSpacing.xs,
+                alignment: WrapAlignment.spaceBetween,
+                crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
-                  Expanded(child: cardMonth),
-                  const SizedBox(width: AppSpacing.sm),
-                  Expanded(child: cardYear),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.local_fire_department_rounded,
+                        size: 17,
+                        color: AppColors.limeAccentDark,
+                      ),
+                      const SizedBox(width: 6),
+                      Flexible(
+                        child: Text(
+                          'Workout Streak: ${streaks.current} day${streaks.current == 1 ? '' : 's'} (Best: ${streaks.best}d)',
+                          style: AppTextStyles.caption.copyWith(
+                            color: AppColors.textPrimary,
+                            fontWeight: FontWeight.w700,
+                            fontSize: isMobile ? 11.5 : 12.5,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.summarize_outlined,
+                        size: 16,
+                        color: AppColors.info,
+                      ),
+                      const SizedBox(width: 6),
+                      Flexible(
+                        child: Text(
+                          'Monthly Attendance Report ($monthName ${selectedMonth.year}): $visitsThisMonth visits • $totalMonthTimeStr active',
+                          style: AppTextStyles.caption.copyWith(
+                            color: AppColors.textSecondary,
+                            fontWeight: FontWeight.w600,
+                            fontSize: isMobile ? 11.5 : 12.5,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
-              const SizedBox(height: AppSpacing.sm),
-              Row(
-                children: [
-                  Expanded(child: cardDuration),
-                  const SizedBox(width: AppSpacing.sm),
-                  Expanded(child: cardConsistency),
-                ],
-              ),
-            ],
-          );
-        }
+            ),
+          ],
+        );
       },
     );
   }

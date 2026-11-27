@@ -3,27 +3,35 @@ import 'package:material_ui/material_ui.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_text_styles.dart';
 import '../../../../app/theme/app_theme.dart';
+import '../../../../core/utils/app_responsive.dart';
 import '../../../../core/utils/formatters.dart';
+import '../../../../data/models/payment.dart';
 
-/// Card displaying pending payment status, online gateway availability notices,
-/// and Pay Now action strictly when configured.
+/// Card displaying pending payment status, itemized pending invoice details,
+/// online gateway availability notices, and Pay Now action strictly when configured.
 class PendingPaymentCard extends StatelessWidget {
   final double pendingAmount;
+  final List<Payment> pendingPayments;
   final bool isOnlinePaymentConfigured;
 
   const PendingPaymentCard({
     super.key,
     required this.pendingAmount,
+    this.pendingPayments = const [],
     required this.isOnlinePaymentConfigured,
   });
 
   @override
   Widget build(BuildContext context) {
+    final effectivePendingAmount = pendingAmount > 0
+        ? pendingAmount
+        : pendingPayments.fold<double>(0.0, (sum, p) => sum + p.amount);
+
     // 1. Zero Dues / All Clear State
-    if (pendingAmount <= 0) {
+    if (effectivePendingAmount <= 0 && pendingPayments.isEmpty) {
       return Container(
         width: double.infinity,
-        padding: const EdgeInsets.all(AppSpacing.lg),
+        padding: AppResponsive.cardPadding(context),
         decoration: BoxDecoration(
           color: AppColors.cardBackground,
           borderRadius: BorderRadius.circular(AppRadius.lg),
@@ -76,7 +84,7 @@ class PendingPaymentCard extends StatelessWidget {
     // 2. Pending Dues Present
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(AppSpacing.lg),
+      padding: AppResponsive.cardPadding(context),
       decoration: BoxDecoration(
         color: AppColors.cardBackground,
         borderRadius: BorderRadius.circular(AppRadius.lg),
@@ -108,14 +116,16 @@ class PendingPaymentCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Pending Payment Due: ${AppFormatters.formatCurrency(pendingAmount)}',
+                      'Pending Payment Due: ${AppFormatters.formatCurrency(effectivePendingAmount)}',
                       style: AppTextStyles.h3.copyWith(
                         color: AppColors.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'Outstanding invoice balance awaiting settlement.',
+                      pendingPayments.isNotEmpty
+                          ? '${pendingPayments.length} pending invoice${pendingPayments.length > 1 ? 's' : ''} awaiting settlement.'
+                          : 'Outstanding invoice balance awaiting settlement.',
                       style: AppTextStyles.caption.copyWith(
                         color: AppColors.textSecondary,
                       ),
@@ -125,6 +135,77 @@ class PendingPaymentCard extends StatelessWidget {
               ),
             ],
           ),
+
+          if (pendingPayments.isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.md),
+            ...pendingPayments.map(
+              (p) => Container(
+                margin: const EdgeInsets.only(bottom: AppSpacing.xs),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.md,
+                  vertical: AppSpacing.sm,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.warningBg.withValues(alpha: 0.35),
+                  borderRadius: BorderRadius.circular(AppRadius.md),
+                  border: Border.all(
+                    color: AppColors.warning.withValues(alpha: 0.3),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            p.effectiveServiceName,
+                            style: AppTextStyles.titleMedium.copyWith(
+                              fontSize: 13,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            '${p.invoiceNumber} • ${AppFormatters.formatDate(p.date)} • ${p.paymentMethod}',
+                            style: AppTextStyles.caption.copyWith(
+                              color: AppColors.textSecondary,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          AppFormatters.formatCurrency(p.amount),
+                          style: AppTextStyles.titleMedium.copyWith(
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () => context.go('/payments/${p.id}'),
+                          child: Text(
+                            'View Details',
+                            style: AppTextStyles.caption.copyWith(
+                              color: AppColors.limeAccentDark,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
 
           const SizedBox(height: AppSpacing.md),
           const Divider(color: AppColors.borderSubtle, height: 1),

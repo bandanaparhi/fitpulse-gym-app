@@ -5,6 +5,7 @@ import '../../../app/providers.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_text_styles.dart';
 import '../../../app/theme/app_theme.dart';
+import '../../../core/utils/app_responsive.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/loading_indicator.dart';
@@ -97,8 +98,9 @@ class ProfileScreen extends ConsumerWidget {
           ),
         ),
         data: (member) {
+          final gapLg = AppResponsive.sectionGapLg(context);
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(AppSpacing.lg),
+            padding: AppResponsive.pagePadding(context),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -108,8 +110,6 @@ class ProfileScreen extends ConsumerWidget {
                   subtitle:
                       'Manage your membership identity, contact information, and emergency details.',
                 ),
-
-                const SizedBox(height: AppSpacing.lg),
 
                 // Main Profile Info Card (Photo, Name, ID, Email, Phone, DOB, Emergency Contact, Edit Profile)
                 ProfileInfoCard(
@@ -132,7 +132,7 @@ class ProfileScreen extends ConsumerWidget {
                   ),
                 ),
 
-                const SizedBox(height: AppSpacing.xl),
+                SizedBox(height: gapLg),
 
                 // Protected Membership & Compliance Card
                 Container(
@@ -142,7 +142,7 @@ class ProfileScreen extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(AppRadius.lg),
                     border: Border.all(color: AppColors.borderSubtle),
                   ),
-                  padding: const EdgeInsets.all(AppSpacing.xl),
+                  padding: AppResponsive.cardPaddingLg(context),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

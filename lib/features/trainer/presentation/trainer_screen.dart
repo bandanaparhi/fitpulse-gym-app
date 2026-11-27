@@ -5,6 +5,7 @@ import '../../../app/providers.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_text_styles.dart';
 import '../../../app/theme/app_theme.dart';
+import '../../../core/utils/app_responsive.dart';
 import '../../../data/models/training_session.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_state.dart';
@@ -75,7 +76,7 @@ class TrainerScreen extends ConsumerWidget {
           // If no trainer is assigned, display empty state
           if (trainer == null) {
             return SingleChildScrollView(
-              padding: const EdgeInsets.all(AppSpacing.lg),
+              padding: AppResponsive.pagePadding(context),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -84,7 +85,7 @@ class TrainerScreen extends ConsumerWidget {
                     subtitle:
                         'Connect with your personal coach and follow dedicated training regimes.',
                   ),
-                  const SizedBox(height: AppSpacing.xxl),
+                  SizedBox(height: AppResponsive.sectionGap(context)),
                   EmptyState(
                     icon: Icons.sports_outlined,
                     title: 'No Trainer Assigned',
@@ -109,45 +110,37 @@ class TrainerScreen extends ConsumerWidget {
           final assignedWorkouts = workoutsAsync.value ?? [];
 
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(AppSpacing.lg),
+            padding: AppResponsive.pagePadding(context),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Page Header
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Expanded(
-                      child: PageHeader(
-                        title: 'My Trainer & Coaching',
-                        subtitle:
-                            'Connect with your assigned fitness coach, track upcoming personal training sessions, and follow customized workout regimes.',
+                PageHeader(
+                  title: 'My Trainer & Coaching',
+                  subtitle:
+                      'Connect with your assigned fitness coach, track upcoming personal training sessions, and follow customized workout regimes.',
+                  trailing: OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.md,
+                        vertical: 10,
+                      ),
+                      side: const BorderSide(color: AppColors.borderSubtle),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(AppRadius.md),
                       ),
                     ),
-                    const SizedBox(width: AppSpacing.md),
-                    OutlinedButton.icon(
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.lg,
-                          vertical: AppSpacing.md,
-                        ),
-                        side: const BorderSide(color: AppColors.borderSubtle),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppRadius.md),
-                        ),
-                      ),
-                      icon: const Icon(
-                        Icons.fitness_center_rounded,
-                        size: 18,
-                        color: AppColors.darkCharcoal,
-                      ),
-                      label: const Text('View Workouts'),
-                      onPressed: () => context.go('/workouts'),
+                    icon: const Icon(
+                      Icons.fitness_center_rounded,
+                      size: 16,
+                      color: AppColors.darkCharcoal,
                     ),
-                  ],
+                    label: const Text('View Workouts'),
+                    onPressed: () => context.go('/workouts'),
+                  ),
                 ),
 
-                const SizedBox(height: AppSpacing.xl),
+                SizedBox(height: AppResponsive.sectionGap(context)),
 
                 // Responsive Layout
                 LayoutBuilder(

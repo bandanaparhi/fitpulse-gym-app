@@ -303,5 +303,39 @@ void main() {
       expect(find.textContaining('Your incident ticket has been assigned to the gym facility maintenance team'), findsOneWidget);
       expect(find.text('Report Another Issue'), findsOneWidget);
     });
+
+    testWidgets('SupportScreen displays gym facilities, operating hours, holiday schedule, and gym rules', (tester) async {
+      await tester.binding.setSurfaceSize(const Size(1200, 1800));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      final testSupportRepo = MockSupportRepository(latency: Duration.zero);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            supportRepositoryProvider.overrideWithValue(testSupportRepo),
+          ],
+          child: const MaterialApp(
+            home: Scaffold(
+              body: SupportScreen(),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      expect(find.text('Gym Facilities, Hours & Guidelines'), findsOneWidget);
+      expect(find.text('Gym Open & Closing Time'), findsOneWidget);
+      expect(find.text('Monday – Saturday'), findsOneWidget);
+      expect(find.text('6:00 AM – 10:00 PM'), findsOneWidget);
+      expect(find.text('7:00 AM – 2:00 PM'), findsOneWidget);
+      expect(find.text('Holiday Schedule & Maintenance'), findsOneWidget);
+      expect(find.text('Holiday Schedule & Facility Maintenance Notice'), findsOneWidget);
+      expect(find.text('Gym Facilities & Zones'), findsOneWidget);
+      expect(find.text('Main Strength Deck & Olympic Lifting'), findsOneWidget);
+      expect(find.text('Gym Rules & Guidelines'), findsOneWidget);
+      expect(find.text('Facility Check-In & Access'), findsOneWidget);
+    });
   });
 }

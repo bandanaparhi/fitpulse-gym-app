@@ -28,10 +28,17 @@ void main() {
       expect(find.byIcon(Icons.notifications_outlined), findsOneWidget);
       expect(find.byIcon(Icons.account_circle_outlined), findsOneWidget);
 
-      // 2. Membership status and expiry date
+      // 2. Membership status, remaining days, and expiry date
       expect(find.text(MockData.demoMember.membershipPlan), findsWidgets);
       expect(find.text(MockData.demoMember.membershipStatus.toUpperCase()), findsWidgets);
+      expect(find.textContaining('days left'), findsWidgets);
       expect(find.textContaining('December 30, 2026'), findsWidgets);
+
+      // 2b. Daily fitness progress summary
+      expect(find.text('Daily Fitness Progress'), findsOneWidget);
+      expect(find.text('Today Check-In'), findsOneWidget);
+      expect(find.text('Body Weight'), findsOneWidget);
+      expect(find.text('Daily Nutrition'), findsOneWidget);
 
       // 3. Monthly attendance
       expect(find.text('18 visits'), findsWidgets);
@@ -44,15 +51,14 @@ void main() {
       expect(find.text(MockData.demoMember.assignedTrainer), findsWidgets);
 
       // 6. Quick actions
-      expect(find.text('View Workout'), findsOneWidget);
-      expect(find.text('View Membership'), findsOneWidget);
+      expect(find.text('Start Workout'), findsWidgets);
+      expect(find.text('Check-in'), findsWidgets);
       expect(find.text('Book a Class'), findsOneWidget);
       expect(find.text('View Progress'), findsOneWidget);
 
       // 7. Today's Workout section
       expect(find.text("Today's Workout"), findsOneWidget);
       expect(find.text('Upper Body Power & Hypertrophy'), findsOneWidget);
-      expect(find.text('Start Workout'), findsOneWidget);
 
       // 8. Weekly attendance chart
       expect(find.text('Weekly Attendance & Activity'), findsOneWidget);

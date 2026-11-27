@@ -1,9 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import '../../../app/providers.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_text_styles.dart';
 import '../../../app/theme/app_theme.dart';
+import '../../../core/utils/app_responsive.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../data/models/membership.dart';
 import '../../../shared/widgets/empty_state.dart';
@@ -12,6 +14,7 @@ import '../../../shared/widgets/info_card.dart';
 import '../../../shared/widgets/loading_indicator.dart';
 import '../../../shared/widgets/page_header.dart';
 import '../../../shared/widgets/primary_button.dart';
+import '../../../shared/widgets/secondary_button.dart';
 import 'widgets/membership_progress_timeline.dart';
 import 'widgets/membership_status_badge.dart';
 import 'widgets/renew_membership_modal.dart';
@@ -51,8 +54,9 @@ class MembershipScreen extends ConsumerWidget {
         ),
       ),
       data: (member) {
+        final gap = AppResponsive.sectionGap(context);
         return SingleChildScrollView(
-          padding: const EdgeInsets.all(AppSpacing.lg),
+          padding: AppResponsive.pagePadding(context),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -113,7 +117,23 @@ class MembershipScreen extends ConsumerWidget {
                     children: [
                       // 1. Primary Active Plan Card
                       _buildActivePlanCard(context, member, membership),
-                      const SizedBox(height: AppSpacing.lg),
+                      SizedBox(height: gap),
+
+                      // 1b. Pending Renewal Request Notice (if any)
+                      historyAsync.when(
+                        loading: () => const SizedBox.shrink(),
+                        error: (_, _) => const SizedBox.shrink(),
+                        data: (history) {
+                          final pending = history
+                              .where((h) => h.status.toLowerCase() == 'pending')
+                              .toList();
+                          if (pending.isEmpty) return const SizedBox.shrink();
+                          return Padding(
+                            padding: EdgeInsets.only(bottom: gap),
+                            child: _buildPendingRenewalCard(context, pending.first),
+                          );
+                        },
+                      ),
 
                       // 2. Membership Timeline Card
                       MembershipProgressTimeline(
@@ -121,11 +141,11 @@ class MembershipScreen extends ConsumerWidget {
                         expiryDate: membership.expiryDate,
                         durationMonths: membership.durationMonths,
                       ),
-                      const SizedBox(height: AppSpacing.lg),
+                      SizedBox(height: gap),
 
                       // 3. Included Benefits Section
                       _buildBenefitsCard(context, membership),
-                      const SizedBox(height: AppSpacing.lg),
+                      SizedBox(height: gap),
 
                       // 4. Previous Membership History
                       historyAsync.when(
@@ -137,7 +157,7 @@ class MembershipScreen extends ConsumerWidget {
                   );
                 },
               ),
-              const SizedBox(height: AppSpacing.xl),
+              SizedBox(height: AppResponsive.sectionGapLg(context)),
             ],
           ),
         );
@@ -147,7 +167,7 @@ class MembershipScreen extends ConsumerWidget {
 
   Widget _buildActivePlanCard(BuildContext context, dynamic member, Membership plan) {
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.xl),
+      padding: AppResponsive.cardPaddingLg(context),
       decoration: BoxDecoration(
         color: AppColors.cardBackground,
         borderRadius: AppRadius.roundedLg,
@@ -282,21 +302,89 @@ class MembershipScreen extends ConsumerWidget {
           ),
           const SizedBox(height: AppSpacing.lg),
 
-          // Action row for mobile/compact screens
-          Row(
-            children: [
-              Expanded(
-                child: PrimaryButton(
-                  label: 'Renew / Upgrade Membership',
-                  icon: Icons.autorenew_rounded,
-                  onPressed: () => RenewMembershipModal.show(
-                    context,
-                    currentPlanId: plan.id,
-                    memberId: member.id,
-                  ),
+          // Action row: Renewal Request & Payment History shortcut
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final renewBtn = PrimaryButton(
+                label: 'Renew / Upgrade Membership',
+                icon: Icons.autorenew_rounded,
+                onPressed: () => RenewMembershipModal.show(
+                  context,
+                  currentPlanId: plan.id,
+                  memberId: member.id,
                 ),
-              ),
-            ],
+              );
+              final paymentsBtn = SecondaryButton(
+                label: 'Payment History & Receipts',
+                icon: Icons.receipt_long_outlined,
+                onPressed: () => context.go('/payments'),
+              );
+
+              if (constraints.maxWidth < 520) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    renewBtn,
+                    const SizedBox(height: AppSpacing.sm),
+                    paymentsBtn,
+                  ],
+                );
+              }
+              return Row(
+                children: [
+                  Expanded(child: renewBtn),
+                  const SizedBox(width: AppSpacing.md),
+                  Expanded(child: paymentsBtn),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPendingRenewalCard(BuildContext context, Membership pendingPlan) {
+    return Container(
+      width: double.infinity,
+      padding: AppResponsive.cardPadding(context),
+      decoration: BoxDecoration(
+        color: AppColors.warningBg.withValues(alpha: 0.4),
+        borderRadius: AppRadius.roundedLg,
+        border: Border.all(color: AppColors.warning.withValues(alpha: 0.45)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(AppSpacing.sm),
+            decoration: BoxDecoration(
+              color: AppColors.warning.withValues(alpha: 0.18),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.hourglass_top_rounded, color: AppColors.warning, size: 20),
+          ),
+          const SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Pending Renewal Request: ${pendingPlan.planName}',
+                  style: AppTextStyles.titleMedium.copyWith(fontWeight: FontWeight.w700),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  '${AppFormatters.formatCurrency(pendingPlan.price)} (${pendingPlan.durationMonths}) • Awaiting payment/front-desk verification',
+                  style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: AppSpacing.sm),
+          TextButton(
+            onPressed: () => context.go('/payments'),
+            child: const Text('Payments'),
           ),
         ],
       ),

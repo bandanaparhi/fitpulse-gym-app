@@ -5,14 +5,18 @@ import '../../../app/providers.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_text_styles.dart';
 import '../../../app/theme/app_theme.dart';
+import '../../../core/utils/app_responsive.dart';
+import '../../../data/models/food_log_entry.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/loading_indicator.dart';
 import '../../../shared/widgets/page_header.dart';
+import 'widgets/daily_nutrition_tracker_card.dart';
 import 'widgets/day_selector_tabs.dart';
 import 'widgets/diet_plan_header_card.dart';
 import 'widgets/macro_targets_card.dart';
 import 'widgets/meal_card.dart';
+import 'widgets/meal_reminders_card.dart';
 
 /// Diet Plan screen at `/diet-plan`.
 ///
@@ -103,7 +107,7 @@ class _DietPlanScreenState extends ConsumerState<DietPlanScreen> {
             final activeFat = activeDay?.dayFatGrams ?? plan.fatGrams;
 
             return SingleChildScrollView(
-              padding: const EdgeInsets.all(AppSpacing.lg),
+              padding: AppResponsive.pagePadding(context),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -114,12 +118,10 @@ class _DietPlanScreenState extends ConsumerState<DietPlanScreen> {
                         'Review your daily meal protocol, macronutrient targets, portion sizes, and coach notes.',
                   ),
 
-                  const SizedBox(height: AppSpacing.lg),
-
                   // 1. Plan Overview Card
                   DietPlanHeaderCard(plan: plan),
 
-                  const SizedBox(height: AppSpacing.xl),
+                  SizedBox(height: AppResponsive.sectionGapLg(context)),
 
                   // 2. Macronutrient Targets Card
                   MacroTargetsCard(
@@ -130,7 +132,7 @@ class _DietPlanScreenState extends ConsumerState<DietPlanScreen> {
                     activeFat: activeFat,
                   ),
 
-                  const SizedBox(height: AppSpacing.xl),
+                  SizedBox(height: AppResponsive.sectionGapLg(context)),
 
                   // 3. Multi-Day Selector Tabs
                   if (days.isNotEmpty) ...[
@@ -143,6 +145,21 @@ class _DietPlanScreenState extends ConsumerState<DietPlanScreen> {
                     ),
                     const SizedBox(height: AppSpacing.lg),
                   ],
+
+                  // 3b. Daily Calorie, Macro Tracker & Food Logging
+                  DailyNutritionTrackerCard(
+                    targetCalories: activeCalories,
+                    targetProtein: activeProtein,
+                    targetCarbs: activeCarbs,
+                    targetFat: activeFat,
+                  ),
+
+                  SizedBox(height: AppResponsive.sectionGap(context)),
+
+                  // 3c. Meal Reminders Schedule
+                  const MealRemindersCard(),
+
+                  SizedBox(height: AppResponsive.sectionGapLg(context)),
 
                   // 4. Daily Meal Schedule
                   Row(
@@ -186,9 +203,41 @@ class _DietPlanScreenState extends ConsumerState<DietPlanScreen> {
                   if (activeDay != null && activeDay.meals.isNotEmpty)
                     Column(
                       children: List.generate(activeDay.meals.length, (idx) {
+                        final meal = activeDay.meals[idx];
                         return MealCard(
-                          meal: activeDay.meals[idx],
+                          meal: meal,
                           index: idx + 1,
+                          onLogMeal: () async {
+                            final slot = meal.name.toLowerCase().contains('breakfast')
+                                ? 'Breakfast'
+                                : meal.name.toLowerCase().contains('lunch')
+                                    ? 'Lunch'
+                                    : meal.name.toLowerCase().contains('dinner')
+                                        ? 'Dinner'
+                                        : 'Snack';
+                            await ref.read(foodLogsProvider.notifier).addFoodEntry(
+                                  FoodLogEntry(
+                                    id: 'FOOD-${DateTime.now().millisecondsSinceEpoch}-$idx',
+                                    foodName: meal.name,
+                                    quantity: '${meal.foodItems.length} items',
+                                    mealLabel: slot,
+                                    calories: meal.calories,
+                                    protein: meal.proteinGrams.toDouble(),
+                                    carbohydrates: meal.carbsGrams.toDouble(),
+                                    fat: meal.fatGrams.toDouble(),
+                                    consumedAt: DateTime.now(),
+                                  ),
+                                );
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Logged ${meal.name} (${meal.calories} kcal).'),
+                                  backgroundColor: AppColors.darkCharcoal,
+                                  behavior: SnackBarBehavior.floating,
+                                ),
+                              );
+                            }
+                          },
                         );
                       }),
                     )
